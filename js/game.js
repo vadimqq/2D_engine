@@ -3,6 +3,11 @@ function loop(){
 	requestAnimationFrame(loop);
 }
 
+const initChickenCoords = {
+	X: window.innerWidth / 2,
+	Y: 40,
+};
+
 class Game{
 	constructor(){
 		this.canvasElm = document.createElement("canvas");
@@ -23,10 +28,10 @@ class Game{
 		this.sprite2 = new Sprite(this.gl, "img/walker.png", vs, fs, {width:64, height:64});
 		
 		this.sprite1Pos = new Point();
-		this.sprite2Pos = new Point();
+		this.sprite2Pos = new Point(initChickenCoords.X, initChickenCoords.Y);
 		
 		this.sprite1Frame = new Point();
-		this.sprite2Frame = new Point();
+		this.sprite2Frame = new Point(initChickenCoords.X, initChickenCoords.Y);
 	}
 	
 	resize(x,y){
@@ -44,11 +49,14 @@ class Game{
 		this.gl.enable(this.gl.BLEND);
 		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 		
-		this.sprite1Frame.x = (new Date() * 0.006) % 3;
-		this.sprite1Frame.y = (new Date() * 0.002) % 2;
+		const randomX = this._getRandomCoord(0.006, 3);
+		const randomY = this._getRandomCoord(0.002, 2);
+
+		this.sprite1Frame.x = randomX;
+		this.sprite1Frame.y = randomY;
 		
-		this.sprite2Frame.x = (new Date() * 0.006) % 3;
-		this.sprite2Frame.y = (new Date() * 0.002) % 2;
+		this.sprite2Frame.x = randomX;
+		this.sprite2Frame.y = randomY;
 		
 		this.sprite2Pos.x = (this.sprite2Pos.x + 0.1) % 256;
 		
@@ -56,5 +64,9 @@ class Game{
 		this.sprite2.render(this.sprite2Pos, this.sprite2Frame);
 		
 		this.gl.flush();
+	}
+
+	_getRandomCoord(factor, delimetr){
+		return (new Date() * factor) % delimetr;
 	}
 }
