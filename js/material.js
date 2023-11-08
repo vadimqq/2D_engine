@@ -1,3 +1,21 @@
+const VSHADER_SOURCE = `
+    attribute vec2 a_Position;
+    attribute vec3 a_Color;
+    varying vec3 v_Color;
+    void main() {
+        v_Color = a_Color;
+        gl_Position = vec4(a_Position, 0.0, 1.0);
+    }
+`
+
+const FSHADER_SOURCE = `
+    precision mediump float;
+    varying vec3 v_Color;
+    void main() {
+        gl_FragColor = vec4(v_Color, 1.0);
+    }
+`
+
 class Material{
 	constructor(gl, vs, fs){
 		this.gl = gl;
@@ -142,5 +160,94 @@ class Sprite{
 			
 			gl.useProgram(null);
 		}
+	}
+}
+
+class Object2D {
+	constructor(gl, vertexData, faceData) {
+		this.gl = gl;
+		this.vertexData = vertexData;
+		this.faceData = faceData;
+		this.shaderProgram = this.gl.createProgram();
+
+		this.initShader(this.gl, this.shaderProgram);
+	
+		this.a_Position = this.gl.getAttribLocation(this.shaderProgram, 'a_Position');
+		if (this.a_Position < 0) {
+			console.log('failed a_position');
+		}
+	
+		this.a_Color = this.gl.getAttribLocation(this.shaderProgram, 'a_Color');
+		if (this.a_Color < 0) {
+			console.log('failed a_Color');
+		}
+	}
+
+	initShader() {
+		const VS = this.getShader('vs', VSHADER_SOURCE);
+		const FS = this.getShader('fs', FSHADER_SOURCE);
+	
+		this.gl.attachShader(this.shaderProgram, VS);
+		this.gl.attachShader(this.shaderProgram, FS);
+		this.gl.linkProgram(this.shaderProgram);
+
+		if(!this.gl.getProgramParameter(this.shaderProgram, this.gl.LINK_STATUS)){
+			console.error("Cannot load shader \n"+this.gl.getProgramInfoLog(this.shaderProgram));
+			return null;
+		}
+		
+		this.gl.detachShader(this.shaderProgram, VS);
+		this.gl.detachShader(this.shaderProgram, FS);
+		this.gl.deleteShader(VS);
+		this.gl.deleteShader(FS);
+
+		this.gl.useProgram(this.shaderProgram);
+	}
+
+	getShader(id, shaderSource) {
+		let shader;
+		if (id === 'vs') {
+			shader = this.gl.createShader(this.gl.VERTEX_SHADER);
+		} else if (id === 'fs') {
+			shader = this.gl.createShader(this.gl.FRAGMENT_SHADER);
+		} else {
+			return null;
+		}
+	
+	
+		this.gl.shaderSource(shader, shaderSource);
+		this.gl.compileShader(shader);
+	
+		if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
+			console.log('compilation error');
+			return null;
+		}
+	
+		return shader;
+	}
+
+	render() {
+		this.gl.useProgram(this.shaderProgram);
+		this.gl.enableVertexAttribArray(this.a_Position);
+		this.gl.enableVertexAttribArray(this.a_Color);
+		
+		this.TRIANGLE_VERTEX = this.gl.createBuffer();
+
+		this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.TRIANGLE_VERTEX);
+		this.gl.bufferData(this.gl.ARRAY_BUFFER, new Float32Array(this.vertexData), this.gl.STATIC_DRAW);
+
+		this.TRIANGLE_FACES = this.gl.createBuffer();
+		this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
+		this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.faceData), this.gl.STATIC_DRAW);
+
+		this.gl.clearColor(0, 0, 0, 1.0);
+		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
+
+		this.gl.vertexAttribPointer(this.a_Position, 2, this.gl.FLOAT, false, 4 * (2 + 3), 0);
+		this.gl.vertexAttribPointer(this.a_Color, 3, this.gl.FLOAT, false, 4 * (2 + 3), 2 * 4);
+	
+		this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0);
+		this.gl.flush();
+		this.gl.useProgram(null);
 	}
 }
