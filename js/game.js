@@ -4,9 +4,14 @@ function loop(){
 }
 
 const initChickenCoords = {
-	X: window.innerWidth / 2,
+	X: 80,
 	Y: 40,
 };
+
+const chickenParams = {
+	speed: 0.001,
+	radius: 50,
+}
 
 class Game{
 	constructor(){
@@ -58,7 +63,9 @@ class Game{
 		this.sprite2Frame.x = randomX;
 		this.sprite2Frame.y = randomY;
 		
-		this.sprite2Pos.x = (this.sprite2Pos.x + 0.1) % 256;
+
+		this.sprite2Pos.x = initChickenCoords.X + Math.cos(chickenParams.speed * Date.now()) * chickenParams.radius;
+		this.sprite2Pos.y = initChickenCoords.Y + Math.sin(chickenParams.speed * Date.now()) * chickenParams.radius;
 		
 		this.sprite1.render(this.sprite1Pos, this.sprite1Frame);
 		this.sprite2.render(this.sprite2Pos, this.sprite2Frame);
