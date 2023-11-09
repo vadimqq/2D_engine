@@ -64,8 +64,9 @@ class Game{
 		this.sprite2Frame.y = randomY;
 		
 
-		this.sprite2Pos.x = initChickenCoords.X + Math.cos(chickenParams.speed * Date.now()) * chickenParams.radius;
-		this.sprite2Pos.y = initChickenCoords.Y + Math.sin(chickenParams.speed * Date.now()) * chickenParams.radius;
+		const randomGo = this._getRandomChickenGo(chickenParams.speed);
+		this.sprite2Pos.x = initChickenCoords.X + Math.cos(randomGo) * chickenParams.radius;
+		this.sprite2Pos.y = initChickenCoords.Y + Math.sin(randomGo) * chickenParams.radius;
 		
 		this.sprite1.render(this.sprite1Pos, this.sprite1Frame);
 		this.sprite2.render(this.sprite2Pos, this.sprite2Frame);
@@ -75,5 +76,9 @@ class Game{
 
 	_getRandomCoord(factor, delimetr){
 		return (new Date() * factor) % delimetr;
+	}
+
+	_getRandomChickenGo(factor){
+		return factor * Date.now();
 	}
 }
