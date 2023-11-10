@@ -1,7 +1,6 @@
 
 import { Object2D } from '../core/Object2D';
 import { Matrix3 } from '../math/Matrix3';
-import { Vector2 } from '../math/Vector2';
 
 
 export class WebGLRenderer{
@@ -23,8 +22,12 @@ export class WebGLRenderer{
 
 		this.worldSpaceMatrix = new Matrix3();
 		
-		this.rectangle = new Object2D(this.gl, new Vector2(2, 1));
-		// this.gl.uniformMatrix3fv
+		this.rectangle = new Object2D(this.gl);
+
+
+
+		this.rectangle2 = new Object2D(this.gl);
+		this.rectangle2.position.x = 150
 
 	}
 	getDelta(timeStamp: number) {
@@ -40,5 +43,7 @@ export class WebGLRenderer{
 		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
 		this.rectangle.render();
+		this.rectangle.rotation -= 0.01
+		this.rectangle2.render()
 	}
 }

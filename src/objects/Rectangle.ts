@@ -1,9 +1,11 @@
+import { Object2D } from '../core/Object2D';
 import { Material } from '../materials/Material';
 import { Matrix3 } from '../math/Matrix3';
 import { Vector2 } from '../math/Vector2';
 import fs from '../shaders/fs';
 import vs from '../shaders/vs';
-export class Object2D {
+
+export class Rectangle extends Object2D {
 	matrix = new Matrix3();
 	position = new Vector2(100, 100);
 
