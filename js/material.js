@@ -240,14 +240,11 @@ class Object2D {
 		this.gl.bindBuffer(this.gl.ELEMENT_ARRAY_BUFFER, this.TRIANGLE_FACES);
 		this.gl.bufferData(this.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.faceData), this.gl.STATIC_DRAW);
 
-		this.gl.clearColor(0, 0, 0, 1.0);
-		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
-
 		this.gl.vertexAttribPointer(this.a_Position, 2, this.gl.FLOAT, false, 4 * (2 + 3), 0);
 		this.gl.vertexAttribPointer(this.a_Color, 3, this.gl.FLOAT, false, 4 * (2 + 3), 2 * 4);
 	
 		this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0);
-		this.gl.flush();
+		// this.gl.flush();
 		this.gl.useProgram(null);
 	}
 }
