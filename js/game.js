@@ -10,6 +10,21 @@ const speed_for_sprite = 0.0005
 let center_point = null
 let date = 0
 
+
+
+const rectangle_vertex = [
+    -0.5, -0.5,
+    0.9, 0.1, 0.1,
+    -0.5, 0.5,
+    0.9, 0.1, 0.1,
+    0.5, 0.5,
+    0.1, 0.9, 0.0,
+    0.5, -0.5,
+    0.0, 0.0, 0.9,
+]
+
+const rectangle_face = [0, 1, 2, 0, 2, 3];
+
 class Game{
 	constructor(){
 		this.canvasElm = document.createElement("canvas");
@@ -31,6 +46,8 @@ class Game{
 		this.sprite2 = new Sprite(this.gl, "img/walker.png", vs, fs, {width:64, height:64});
 		
 		center_point = new Point(0, 0)
+
+		this.rectangle = new Object2D(this.gl, rectangle_vertex, rectangle_face);
 
 		this.sprite1Pos = new Point();
 		this.sprite2Pos = new Point();
@@ -76,7 +93,9 @@ class Game{
 		
 		this.sprite2.render(this.sprite2Pos, this.sprite2Frame);
 		this.sprite1.render(this.sprite1Pos, this.sprite1Frame);
+		this.sprite2.render(this.sprite2Pos, this.sprite2Frame);
 
+		this.rectangle.render();
 		
 		this.gl.flush();
 	}
