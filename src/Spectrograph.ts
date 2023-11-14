@@ -12,6 +12,8 @@ const rectangle3 = new Mesh();
 
 let test = 0
 
+const testArr = Array.from(Array(0).keys())
+
 export class Spectrograph {
     renderer: WebGLRenderer;
     scene: Scene;
@@ -22,18 +24,22 @@ export class Spectrograph {
         this.camera = new Camera();
     }
     init() {
-
+        testArr.forEach(element => {
+            const R = new Mesh();
+            R.setPosition(new Vector2(Math.floor(Math.random() * 500), Math.floor(Math.random() * 500)))
+            this.scene.add(R)
+        });
         rectangle.setPosition(new Vector2(100, 100))
-        rectangle2.setPosition(new Vector2(40, 40))
-        rectangle3.setPosition(new Vector2(10, 10))
-        // rectangle.setScale(new Vector2(1, 1))
-        // rectangle.setRotation(2)
+        // rectangle2.setPosition(new Vector2(40, 40))
+        // rectangle3.setPosition(new Vector2(10, 10))
+        // // rectangle.setScale(new Vector2(1, 1))
+        // // rectangle.setRotation(2)
 
         this.scene.add(rectangle)
-        rectangle.add(rectangle2)
-        rectangle2.add(rectangle3)
-        // console.log(rectangle2.worldMatrix)
-        // rectangle2.setRotation(1)
+        // rectangle.add(rectangle2)
+        // rectangle2.add(rectangle3)
+        // // console.log(rectangle2.worldMatrix)
+        // // rectangle2.setRotation(1)
         this.render()
 
         this.camera.setScale(1)
@@ -43,10 +49,9 @@ export class Spectrograph {
         const bind = this.render.bind(this)
         // rectangle.setPosition(new Vector2(rectangle.position.x + 1, rectangle.position.y))
 
-        // rectangle.setRotation(test)
-        // test += 0.01
+        rectangle.setRotation(test)
+        test += 0.05
         // rectangle.setScale(new Vector2(rectangle.scale.x + 0.01, rectangle.scale.y))
-
 
         this.renderer.render(this.scene, this.camera)
 	    requestAnimationFrame(bind);

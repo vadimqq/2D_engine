@@ -1,9 +1,12 @@
 import { Matrix3 } from '../math/Matrix3';
 import { Vector2 } from '../math/Vector2';
+import { BufferGeometry } from './BufferGeometry';
+import { Color } from './Color';
 
 export class Object2D {
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
+	needUpdateMatrix = true;
 
 	position = new Vector2(0, 0);
 	rotation = 0;
@@ -11,16 +14,29 @@ export class Object2D {
 	
 	parent: Object2D | null = null;
 	children: Object2D[] = [];
-	constructor() {}
+
+	geometry: BufferGeometry;
+
+	color: Color;
+
+	constructor(geometry: BufferGeometry, color: Color) {
+		this.geometry = geometry;
+		this.color = color;
+	}
+
 	setRotation(angle: number) {
 		this.rotation = angle
+		this.needUpdateMatrix = true
 	}
 	setPosition(vector: Vector2) {
 		this.position = vector
+		this.needUpdateMatrix = true
 	}
 	setScale(vector: Vector2) {
 		this.scale = vector
+		this.needUpdateMatrix = true
 	}
+
 	getWidth() { return 0 }
 	getHeight() { return 0 }
 
@@ -39,15 +55,20 @@ export class Object2D {
 		}
 	}
 	computeWorldMatrix() {
-		this.worldMatrix.identity()
-		
-		if (this.parent) {
-			this.worldMatrix.multiply(this.parent.worldMatrix)
+		if (this.needUpdateMatrix) {
+			this.worldMatrix.identity()
+			
+			if (this.parent) {
+				this.worldMatrix.multiply(this.parent.worldMatrix)
+			}
+			this.computedLocalMatrix()
+			this.worldMatrix.multiply(this.localMatrix)
+			this.needUpdateMatrix = false
+			this.children.forEach((child) => {child.needUpdateMatrix = true})
 		}
-		this.computedLocalMatrix()
-		this.worldMatrix.multiply(this.localMatrix)
+		return this.worldMatrix
 	}
-	computedLocalMatrix() {
+	private computedLocalMatrix() {
 		const width = this.getWidth();
 		const height = this.getHeight()
 		this.localMatrix.identity()
@@ -60,11 +81,6 @@ export class Object2D {
 		//------------------------------------------------
 		this.localMatrix.scale(this.scale.x, this.scale.y)
 
-		// this.localMatrix.set(
-		// 	0.97842824459075928, -0.20658683776855469, 0,
-		// 	0.90012037754058838, 0.43564122915267944, 0,
-		// 	100, 100, 1
-		// )
 		return this.localMatrix
 	}
 }
