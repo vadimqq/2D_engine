@@ -6,238 +6,6 @@ export const getBindPointForSamplerType = (gl: WebGL2RenderingContext, type: num
     return undefined;
 }
 
-// export const createUniformSetters = (gl: WebGL2RenderingContext, program: WebGLProgram) => {
-//     let textureUnit = 0;
-
-//     function createUniformSetter(program: WebGLProgram, uniformInfo: WebGLActiveInfo) {
-//       const location = gl.getUniformLocation(program, uniformInfo.name);
-//       const type = uniformInfo.type;
-//       // Check if this uniform is an array
-//       const isArray = (uniformInfo.size > 1 && uniformInfo.name.substr(-3) === '[0]');
-//       if (type === gl.FLOAT && isArray) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform1fv(location, v);
-//         };
-//       }
-//       if (type === gl.FLOAT) {
-//         return function(v: number) {
-//           gl.uniform1f(location, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_VEC2) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform2fv(location, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_VEC3) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform3fv(location, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_VEC4) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform4fv(location, v);
-//         };
-//       }
-//       if (type === gl.INT && isArray) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform1iv(location, v);
-//         };
-//       }
-//       if (type === gl.INT) {
-//         return function(v: number) {
-//           gl.uniform1i(location, v);
-//         };
-//       }
-//       if (type === gl.INT_VEC2) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform2iv(location, v);
-//         };
-//       }
-//       if (type === gl.INT_VEC3) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform3iv(location, v);
-//         };
-//       }
-//       if (type === gl.INT_VEC4) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform4iv(location, v);
-//         };
-//       }
-//       if (type === gl.BOOL) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform1iv(location, v);
-//         };
-//       }
-//       if (type === gl.BOOL_VEC2) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform2iv(location, v);
-//         };
-//       }
-//       if (type === gl.BOOL_VEC3) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform3iv(location, v);
-//         };
-//       }
-//       if (type === gl.BOOL_VEC4) {
-//         return function(v: Iterable<number>) {
-//           gl.uniform4iv(location, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_MAT2) {
-//         return function(v: Iterable<number>) {
-//           gl.uniformMatrix2fv(location, false, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_MAT3) {
-//         return function(v: Iterable<number>) {
-//           gl.uniformMatrix3fv(location, false, v);
-//         };
-//       }
-//       if (type === gl.FLOAT_MAT4) {
-//         return function(v: Iterable<number>) {
-//           gl.uniformMatrix4fv(location, false, v);
-//         };
-//       }
-//       // if ((type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) && isArray) {
-//       //   const units = [];
-//       //   for (let ii = 0; ii < info.size; ++ii) {
-//       //     units.push(textureUnit++);
-//       //   }
-//       //   return function(bindPoint, units) {
-//       //     return function(textures) {
-//       //       gl.uniform1iv(location, units);
-//       //       textures.forEach(function(texture, index) {
-//       //         gl.activeTexture(gl.TEXTURE0 + units[index]);
-//       //         gl.bindTexture(bindPoint, texture);
-//       //       });
-//       //     };
-//       //   }(getBindPointForSamplerType(gl, type), units);
-//       // }
-//       // if (type === gl.SAMPLER_2D || type === gl.SAMPLER_CUBE) {
-//       //   return function(bindPoint, unit) {
-//       //     return function(texture) {
-//       //       gl.uniform1i(location, unit);
-//       //       gl.activeTexture(gl.TEXTURE0 + unit);
-//       //       gl.bindTexture(bindPoint, texture);
-//       //     };
-//       //   }(getBindPointForSamplerType(gl, type), textureUnit++);
-//       // }
-//       throw ('unknown type: 0x' + type.toString(16)); // we should never get here.
-//     }
-
-//     const uniformSetters: {[key: string]: ((v: Iterable<number>) => void) | ((v: number) => void)} = {};
-//     const numUniforms = gl.getProgramParameter(program, gl.ACTIVE_UNIFORMS);
-//     console.log(numUniforms)
-//     for (let ii = 0; ii < numUniforms; ++ii) {
-//       const uniformInfo = gl.getActiveUniform(program, ii);
-//       if (!uniformInfo) {
-//         break;
-//       }
-//       let name = uniformInfo.name;
-     
-//       // remove the array suffix.
-//       if (name.substr(-3) === '[0]') {
-//         name = name.substr(0, name.length - 3);
-//       }
-//       const setter = createUniformSetter(program, uniformInfo);
-//       uniformSetters[name] = setter;
-//     }
-//     return uniformSetters;
-// }
-
-// export const setUniforms = (setters, ...values) => {
-//     setters = setters.uniformSetters || setters;
-//     for (const uniforms of values) {
-//       Object.keys(uniforms).forEach(function(name) {
-//         const setter = setters[name];
-//         if (setter) {
-//           setter(uniforms[name]);
-//         }
-//       });
-//     }
-// }
-
-// export const createAttributeSetters = (gl: WebGL2RenderingContext, program) => {
-//     const attribSetters = {
-//     };
-
-//     function createAttribSetter(index) {
-//       return function(b) {
-//           if (b.value) {
-//             gl.disableVertexAttribArray(index);
-//             switch (b.value.length) {
-//               case 4:
-//                 gl.vertexAttrib4fv(index, b.value);
-//                 break;
-//               case 3:
-//                 gl.vertexAttrib3fv(index, b.value);
-//                 break;
-//               case 2:
-//                 gl.vertexAttrib2fv(index, b.value);
-//                 break;
-//               case 1:
-//                 gl.vertexAttrib1fv(index, b.value);
-//                 break;
-//               default:
-//                 throw new Error('the length of a float constant value must be between 1 and 4!');
-//             }
-//           } else {
-//             gl.bindBuffer(gl.ARRAY_BUFFER, b.buffer);
-//             gl.enableVertexAttribArray(index);
-//             gl.vertexAttribPointer(
-//                 index, b.numComponents || b.size, b.type || gl.FLOAT, b.normalize || false, b.stride || 0, b.offset || 0);
-//           }
-//         };
-//     }
-
-//     const numAttribs = gl.getProgramParameter(program, gl.ACTIVE_ATTRIBUTES);
-//     for (let ii = 0; ii < numAttribs; ++ii) {
-//       const attribInfo = gl.getActiveAttrib(program, ii);
-//       if (!attribInfo) {
-//         break;
-//       }
-//       const index = gl.getAttribLocation(program, attribInfo.name);
-//       attribSetters[attribInfo.name] = createAttribSetter(index);
-//     }
-
-//     return attribSetters;
-// }
-
-// export const setAttributes = (setters, attribs) => {
-//     setters = setters.attribSetters || setters;
-//     Object.keys(attribs).forEach(function(name) {
-//       const setter = setters[name];
-//       if (setter) {
-//         setter(attribs[name]);
-//       }
-//     });
-// }
-
-// export const createVAOAndSetAttributes = (gl: WebGL2RenderingContext, setters, attribs, indices) => {
-//     const vao = gl.createVertexArray();
-//     gl.bindVertexArray(vao);
-//     setAttributes(setters, attribs);
-//     if (indices) {
-//       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indices);
-//     }
-//     // We unbind this because otherwise any change to ELEMENT_ARRAY_BUFFER
-//     // like when creating buffers for other stuff will mess up this VAO's binding
-//     gl.bindVertexArray(null);
-//     return vao;
-// }
-
-export const createVAOFromBufferInfo = (gl: WebGL2RenderingContext, programInfo, bufferInfo) => {
-  return createVAOAndSetAttributes(gl, programInfo.attribSetters || programInfo, bufferInfo.attribs, bufferInfo.indices);
-}
-
-// export const setBuffersAndAttributes = (gl: WebGL2RenderingContext, setters, buffers) => {
-//     setAttributes(setters, buffers.attribs);
-//     if (buffers.indices) {
-//       gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, buffers.indices);
-//     }
-// }
-
 // Add your prefix here.
 const browserPrefixes = [
   '',
@@ -298,14 +66,6 @@ export const augmentTypedArray = (typedArray, numComponents) => {
 export const createAugmentedTypedArray = (numComponents, numElements, opt_type) => {
   const Type = opt_type || Float32Array;
   return augmentTypedArray(new Type(numComponents * numElements), numComponents);
-}
-
-export const createBufferFromTypedArra = (gl: WebGL2RenderingContext, array, type, drawType) => {
-    type = type || gl.ARRAY_BUFFER;
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(type, buffer);
-    gl.bufferData(type, array, drawType || gl.STATIC_DRAW);
-    return buffer;
 }
 
 export const allButIndices = (name) => {
@@ -474,73 +234,44 @@ export const createBufferInfoFromArrays = (gl: WebGL2RenderingContext, arrays: B
     return bufferInfo;
 }
 
-// export const createBuffersFromArrays = (gl: WebGL2RenderingContext, arrays) => {
-//     const buffers = { };
-//     Object.keys(arrays).forEach(function(key) {
-//       const type = key === 'indices' ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
-//       const array = makeTypedArray(arrays[key], name);
-//       buffers[key] = createBufferFromTypedArray(gl, array, type);
-//     });
+export const createBuffersFromArrays = (gl: WebGL2RenderingContext, arrays) => {
+    const buffers = { };
+    Object.keys(arrays).forEach(function(key) {
+      const type = key === 'indices' ? gl.ELEMENT_ARRAY_BUFFER : gl.ARRAY_BUFFER;
+      const array = makeTypedArray(arrays[key], name);
+      buffers[key] = createBufferFromTypedArray(gl, array, type);
+    });
 
-//     // hrm
-//     if (arrays.indices) {
-//       buffers.numElements = arrays.indices.length;
-//     } else if (arrays.position) {
-//       buffers.numElements = arrays.position.length / 3;
-//     }
+    // hrm
+    if (arrays.indices) {
+      buffers.numElements = arrays.indices.length;
+    } else if (arrays.position) {
+      buffers.numElements = arrays.position.length / 3;
+    }
 
-//     return buffers;
-// }
+    return buffers;
+}
 
-// export const drawBufferInfo = (gl, bufferInfo, primitiveType, count, offset) => {
-//     const indices = bufferInfo.indices;
-//     primitiveType = primitiveType === undefined ? gl.TRIANGLES : primitiveType;
-//     const numElements = count === undefined ? bufferInfo.numElements : count;
-//     offset = offset === undefined ? 0 : offset;
-//     if (indices) {
-//       gl.drawElements(primitiveType, numElements, gl.UNSIGNED_SHORT, offset);
-//     } else {
-//       gl.drawArrays(primitiveType, offset, numElements);
-//     }
-// }
+export const drawBufferInfo = (gl, bufferInfo, primitiveType, count, offset) => {
+    const indices = bufferInfo.indices;
+    primitiveType = primitiveType === undefined ? gl.TRIANGLES : primitiveType;
+    const numElements = count === undefined ? bufferInfo.numElements : count;
+    offset = offset === undefined ? 0 : offset;
+    if (indices) {
+      gl.drawElements(primitiveType, numElements, gl.UNSIGNED_SHORT, offset);
+    } else {
+      gl.drawArrays(primitiveType, offset, numElements);
+    }
+}
 
-// export const drawObjectList = (gl, objectsToDraw) => {
-//     let lastUsedProgramInfo = null;
-//     let lastUsedBufferInfo = null;
-
-//     objectsToDraw.forEach(function(object) {
-//       const programInfo = object.programInfo;
-//       const bufferInfo = object.bufferInfo;
-//       let bindBuffers = false;
-
-//       if (programInfo !== lastUsedProgramInfo) {
-//         lastUsedProgramInfo = programInfo;
-//         gl.useProgram(programInfo.program);
-//         bindBuffers = true;
-//       }
-
-//       // Setup all the needed attributes.
-//       if (bindBuffers || bufferInfo !== lastUsedBufferInfo) {
-//         lastUsedBufferInfo = bufferInfo;
-//         setBuffersAndAttributes(gl, programInfo.attribSetters, bufferInfo);
-//       }
-
-//       // Set the uniforms.
-//       setUniforms(programInfo.uniformSetters, object.uniforms);
-
-//       // Draw
-//       drawBufferInfo(gl, bufferInfo);
-//     });
-// }
-
-// export const glEnumToString = (gl, v) => {
-//     const results = [];
-//     for (const key in gl) {
-//       if (gl[key] === v) {
-//         results.push(key);
-//       }
-//     }
-//     return results.length
-//         ? results.join(' | ')
-//         : `0x${v.toString(16)}`;
-// }
+export const glEnumToString = (gl, v) => {
+    const results = [];
+    for (const key in gl) {
+      if (gl[key] === v) {
+        results.push(key);
+      }
+    }
+    return results.length
+        ? results.join(' | ')
+        : `0x${v.toString(16)}`;
+}
