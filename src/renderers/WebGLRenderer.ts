@@ -35,7 +35,7 @@ export class WebGLRenderer {
 
     this.rectangle =
       new Object2D(this.gl);
-
+      this.rectangle.matrix.translate(300, 200);
   }
 
   getDelta(timeStamp: number) {
@@ -50,7 +50,7 @@ export class WebGLRenderer {
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-    this.rectangle.matrix.translate(1,0);
+    // this.rectangle.matrix.translate(3,0);
     // this._run();
     // this.rectangle =
     //   new Object2D(this.gl, this.worldSpaceMatrix.translate(this.transitionVector), this.resizeVector);

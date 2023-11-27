@@ -2,8 +2,8 @@ export class Material{
 	constructor(gl, vs, fs){
 		this.gl = gl;
 		
-		let vsShader = this.getShader(vs, gl.VERTEX_SHADER);
-		let fsShader = this.getShader(fs, gl.FRAGMENT_SHADER);
+		let vsShader = this._getShader(vs, gl.VERTEX_SHADER);
+		let fsShader = this._getShader(fs, gl.FRAGMENT_SHADER);
 		
 		if(vsShader && fsShader){
 			this.program = gl.createProgram();
@@ -21,11 +21,11 @@ export class Material{
 			gl.deleteShader(vsShader);
 			gl.deleteShader(fsShader);
 			
-			gl.useProgram(null);
+			gl.useProgram(this.program);
 		}
 	}
 	
-	getShader(script, type){
+	_getShader(script, type){
 		let gl = this.gl;
 		var output = gl.createShader(type);
 		gl.shaderSource(output, script);

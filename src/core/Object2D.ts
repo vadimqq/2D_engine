@@ -11,7 +11,7 @@ const rectangle_vertex = [
     150, 150,
     0.1, 0.9, 0.0,
     150, -150,
-    0.0, 0.0, 0.9,
+    0.1, 0.0, 0.9,
 ]
 
 const rectangle_face = [0, 1, 2, 0, 2, 3];
@@ -31,7 +31,6 @@ export class Object2D {
 	}
 	render(pipMatrix: Matrix3) {
 		this.worldMatrix.identity().multiply(pipMatrix).multiply(this.matrix);
-		this.gl.useProgram(this.material.program);
 		this.gl.enableVertexAttribArray(this.a_Position);
 		this.gl.enableVertexAttribArray(this.a_Color);
 
@@ -49,6 +48,5 @@ export class Object2D {
 		this.gl.uniformMatrix3fv(this.u_matrix, false, this.worldMatrix.elements);
 
 		this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0);
-		this.gl.useProgram(null);
 	}
 }
