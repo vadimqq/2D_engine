@@ -1,21 +1,24 @@
 import { Material } from '../materials/Material';
+import { Matrix3 } from '../math/Matrix3';
 import fs from '../shaders/fs';
 import vs from '../shaders/vs';
 
 const rectangle_vertex = [
-    -0.5, -0.5,
+    400, 400,
     0.9, 0.1, 0.1,
-    -0.5, 0.5,
+    400, 800,
     0.9, 0.1, 0.1,
-    0.5, 0.5,
+    800, 800,
     0.1, 0.9, 0.0,
-    0.5, -0.5,
+    800, 400,
     0.0, 0.0, 0.9,
 ]
 
 const rectangle_face = [0, 1, 2, 0, 2, 3];
 
 export class Object2D {
+	localMatrix = new Matrix3();
+	worldMatrix = new Matrix3();
 	constructor(gl: WebGL2RenderingContext) {
 		this.gl = gl;
 		this.vertexData = rectangle_vertex;
@@ -24,8 +27,10 @@ export class Object2D {
 			
 		this.a_Position = this.gl.getAttribLocation(this.material.program, 'a_Position');
 		this.a_Color = this.gl.getAttribLocation(this.material.program, 'a_Color');
+		// this.u_Resolution = this.gl.getUniformLocation(this.material.program, "u_Resolution");
+		this.u_Matrix = this.gl.getUniformLocation(this.material.program, "u_Matrix");
 	}
-	render() {
+	render(projectionMatrix: Matrix3) {
 		this.gl.useProgram(this.material.program);
 		this.gl.enableVertexAttribArray(this.a_Position);
 		this.gl.enableVertexAttribArray(this.a_Color);
@@ -41,6 +46,10 @@ export class Object2D {
 
 		this.gl.vertexAttribPointer(this.a_Position, 2, this.gl.FLOAT, false, 4 * (2 + 3), 0);
 		this.gl.vertexAttribPointer(this.a_Color, 3, this.gl.FLOAT, false, 4 * (2 + 3), 2 * 4);
+
+		// this.gl.uniform2f(this.u_Resolution, this.gl.canvas.width, this.gl.canvas.height)
+		this.worldMatrix.copy(projectionMatrix).multiply(this.localMatrix)
+		this.gl.uniformMatrix3fv(this.u_Matrix, false, this.worldMatrix.elements);
 
 		this.gl.drawElements(this.gl.TRIANGLES, 6, this.gl.UNSIGNED_SHORT, 0);
 		this.gl.useProgram(null);
