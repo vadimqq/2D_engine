@@ -1,7 +1,9 @@
 import {Object2D} from '../core/Object2D';
 import {Matrix3} from '../math/Matrix3';
 
-let STEP = 0.019;
+let STEP = 5;
+const INITIAL_TRANSLATE_X = 100;
+const INITIAL_TRANSLATE_Y = 100;
 
 export class WebGLRenderer {
   canvasElement: HTMLCanvasElement;
@@ -10,8 +12,9 @@ export class WebGLRenderer {
   lastTime = 0;
 
   _count = 0;
-  _step = STEP;
-  _directing: 'RIGHT' | 'LEFT' = 'RIGHT';
+  _step_horizontal = 0;
+  _step_vertical = 0;
+  _directing: 'RIGHT' | 'LEFT' | 'BOTTOM' | 'TOP' = 'RIGHT';
 
   constructor() {
     this.canvasElement = document.createElement('canvas')
@@ -33,9 +36,11 @@ export class WebGLRenderer {
       -1, 1, 1
     )
 
-    this.rectangle =
-      new Object2D(this.gl);
-      this.rectangle.matrix.translate(300, 200);
+    this.rectangle = new Object2D(this.gl);
+    // this.rectangle2 = new Object2D(this.gl);
+    // this.rectangle2.matrix.translate(INITIAL_TRANSLATE_X, INITIAL_TRANSLATE_Y);
+
+    this.rectangle.matrix.translate(INITIAL_TRANSLATE_X, INITIAL_TRANSLATE_Y);
   }
 
   getDelta(timeStamp: number) {
@@ -50,28 +55,34 @@ export class WebGLRenderer {
     this.gl.enable(this.gl.BLEND);
     this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-    // this.rectangle.matrix.translate(3,0);
-    // this._run();
-    // this.rectangle =
-    //   new Object2D(this.gl, this.worldSpaceMatrix.translate(this.transitionVector), this.resizeVector);
+    this._run();
+
     this.rectangle.render(this.projectionMatrix);
   }
 
   _run() {
-    if (this._count < 0.7 && this._directing === 'RIGHT') {
-      this.transitionVector.setX(this._count += this._step);
-      this._step -= STEP / 200;
-    } else if (this._count > -0.7 && this._directing === 'LEFT') {
-      this.transitionVector.setX(this._count -= this._step);
-      this._step -= STEP / 200;
+    if (this._directing === 'RIGHT') {
+      this.rectangle.matrix.translate(STEP, 0);
+      this._step_horizontal += STEP;
+    } else if (this._directing === 'LEFT') {
+      this.rectangle.matrix.translate(-STEP, 0);
+      this._step_horizontal -= STEP;
+    } else if (this._directing === 'BOTTOM') {
+      this.rectangle.matrix.translate(0, STEP);
+      this._step_vertical += STEP;
+    } else if (this._directing === 'TOP') {
+      this.rectangle.matrix.translate(0, -STEP);
+      this._step_vertical -= STEP;
     }
 
-    if(this._count > 0.7 && this._directing === 'RIGHT'){
+    if(this._step_horizontal > (this.canvasElement.width - INITIAL_TRANSLATE_X * 2) && this._step_vertical <= 0 && this._directing === 'RIGHT'){
+      this._directing = 'BOTTOM';
+    } else if (this._step_horizontal > (this.canvasElement.width - INITIAL_TRANSLATE_X * 2) && this._step_vertical > (this.canvasElement.height - INITIAL_TRANSLATE_Y * 2) && this._directing === 'BOTTOM'){
       this._directing = 'LEFT';
-      this._step = STEP;
-    } else if (this._count < -0.7 && this._directing === 'LEFT'){
+    } else if (this._step_horizontal < 0 && this._step_vertical >= (this.canvasElement.height - INITIAL_TRANSLATE_Y * 2) && this._directing === 'LEFT'){
+      this._directing = 'TOP';
+    } else if (this._step_horizontal < 0 && this._step_vertical <= 0 && this._directing === 'TOP'){
       this._directing = 'RIGHT';
-      this._step = STEP;
     }
   }
 }

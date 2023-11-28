@@ -10,6 +10,9 @@ export class Matrix3 {
 		this.elements[3] = n21; this.elements[4] = n22; this.elements[5] = n23;
 		this.elements[6] = n31; this.elements[7] = n32; this.elements[8] = n33;
 	}
+	getTranslate(){
+		return { x: this.multiply(_m3).elements[6], y : this.multiply(_m3).elements[7] };
+	}
 	translate (x: number, y: number) {
 		_m3.set(
 			1, 0, 0,
