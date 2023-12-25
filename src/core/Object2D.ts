@@ -1,35 +1,75 @@
 import { Material } from '../materials/Material';
 import { Matrix3 } from '../math/Matrix3';
+import { Vector2 } from '../math/Vector2';
 import fs from '../shaders/fs';
 import vs from '../shaders/vs';
 
-const rectangle_vertex = [
-    400, 400,
-    0.9, 0.1, 0.1,
-    400, 800,
-    0.9, 0.1, 0.1,
-    800, 800,
-    0.1, 0.9, 0.0,
-    800, 400,
-    0.0, 0.0, 0.9,
-]
+const size = 50;
 
-const rectangle_face = [0, 1, 2, 0, 2, 3];
+const rectangle_vertex = [
+    0, 0,
+    0.9, 0.1, 0.1,
+    size, 0,
+    0.9, 0.1, 0.1,
+    0, size,
+    0.1, 0.9, 0.0,
+    size, size,
+    0.0, 0.0, 0.9,
+];
+
+const rectangle_face = [0, 1, 2, 1, 2, 3];
 
 export class Object2D {
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
+	needUpdateMatrix = true;
+
+	position = new Vector2(50, 50);
+	rotation = 0;
+	scale = new Vector2(1, 1);
+	
 	constructor(gl: WebGL2RenderingContext) {
 		this.gl = gl;
 		this.vertexData = rectangle_vertex;
 		this.faceData = rectangle_face;
-        this.material = new Material(gl, vs, fs)
+        this.material = new Material(gl, vs, fs);
 			
 		this.a_Position = this.gl.getAttribLocation(this.material.program, 'a_Position');
 		this.a_Color = this.gl.getAttribLocation(this.material.program, 'a_Color');
 		// this.u_Resolution = this.gl.getUniformLocation(this.material.program, "u_Resolution");
 		this.u_Matrix = this.gl.getUniformLocation(this.material.program, "u_Matrix");
 	}
+	setRotation(angle: number) {
+		this.rotation = angle
+		this.needUpdateMatrix = true
+	}
+	setPosition(vector: Vector2) {
+		this.position = vector
+		this.needUpdateMatrix = true
+	}
+	setScale(vector: Vector2) {
+		this.scale = vector
+		this.needUpdateMatrix = true
+	}
+
+	computeLocalMatrix() {
+		if (this.needUpdateMatrix) {
+			const width = size;
+			const height = size;
+			this.localMatrix.identity();
+	
+			this.localMatrix.translate(this.position.x, this.position.y);
+	
+			this.localMatrix.translate(width / 2, height /2)
+			this.localMatrix.rotate(this.rotation);
+			this.localMatrix.translate(-width / 2, -height / 2)
+			
+			this.localMatrix.scale(this.scale.x, this.scale.y)
+	
+			this.needUpdateMatrix = false
+		}
+	}
+
 	render(projectionMatrix: Matrix3) {
 		this.gl.useProgram(this.material.program);
 		this.gl.enableVertexAttribArray(this.a_Position);
@@ -48,6 +88,7 @@ export class Object2D {
 		this.gl.vertexAttribPointer(this.a_Color, 3, this.gl.FLOAT, false, 4 * (2 + 3), 2 * 4);
 
 		// this.gl.uniform2f(this.u_Resolution, this.gl.canvas.width, this.gl.canvas.height)
+		this.computeLocalMatrix();
 		this.worldMatrix.copy(projectionMatrix).multiply(this.localMatrix)
 		this.gl.uniformMatrix3fv(this.u_Matrix, false, this.worldMatrix.elements);
 

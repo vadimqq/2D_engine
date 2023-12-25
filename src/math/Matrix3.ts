@@ -83,7 +83,7 @@ export class Matrix3 {
 				m.elements[3], m.elements[4], m.elements[5],
 				m.elements[6], m.elements[7], m.elements[8],
 			)
-			return this;
+			return this
 		}
 		toArray() {
 			return this.elements

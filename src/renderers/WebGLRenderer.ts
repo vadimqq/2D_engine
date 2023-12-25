@@ -8,9 +8,8 @@ export class WebGLRenderer{
 	canvasElement: HTMLCanvasElement;
 	gl: WebGL2RenderingContext;
 	projectionMatrix: Matrix3;
+	rectangle: Object2D;
 	lastTime = 0
-	sceneMatrix = new Matrix3();
-	cameraMatrix = new Matrix3();
 	constructor(){
 		this.canvasElement = document.createElement('canvas')
         this.canvasElement.width = window.innerWidth
@@ -32,6 +31,7 @@ export class WebGLRenderer{
         )
 		
 		this.rectangle = new Object2D(this.gl);
+		// this.rectangle.setPosition({x: this.rectangle.position.x + 50, y: this.rectangle.position.y + 50});
 		// this.gl.uniformMatrix3fv
 
 	}
@@ -44,16 +44,12 @@ export class WebGLRenderer{
 		if (this.canvasElement.width !== window.innerWidth || this.canvasElement.height !== window.innerHeight) {
 			this.canvasElement.width = window.innerWidth
 			this.canvasElement.height = window.innerHeight;
-			this.projectionMatrix.set(
+					this.projectionMatrix.set(
             2 / this.canvasElement.width, 0, 0,
             0, -2 / this.canvasElement.height, 0,
             -1, 1, 1
-        	);
+        );
 		}
-
-		this.cameraMatrix.scale(1, 1.001);
-
-		this.sceneMatrix.copy(this.projectionMatrix).multiply(this.cameraMatrix)
 
 		this.gl.viewport(0,0, this.canvasElement.width, this.canvasElement.height);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
@@ -61,6 +57,9 @@ export class WebGLRenderer{
 		this.gl.enable(this.gl.BLEND);
 		this.gl.blendFunc(this.gl.SRC_ALPHA, this.gl.ONE_MINUS_SRC_ALPHA);
 
-		this.rectangle.render(this.sceneMatrix);
+		// this.rectangle.setScale({x: this.rectangle.scale.x * 1.001, y: this.rectangle.scale.y * 1.001});
+		// this.rectangle.setPosition({x: this.rectangle.position.x + 0.1, y: this.rectangle.position.y + 0.1});
+		this.rectangle.setRotation(this.rectangle.rotation + 0.01);
+		this.rectangle.render(this.projectionMatrix);
 	}
 }
