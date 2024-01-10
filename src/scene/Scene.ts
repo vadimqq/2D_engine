@@ -4,6 +4,7 @@ export class Scene extends Object2D {
     type = 'Scene';
     backgroundColor = null;
     constructor(){
+        //@ts-ignore
         super();
     }
 }
