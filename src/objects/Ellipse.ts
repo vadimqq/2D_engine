@@ -10,7 +10,7 @@ const segment = 12;
 
 export class Ellipse extends Object2D {
     constructor() {
-        const points = [0, 0];
+        const points = [];
         const indices = [];
         const step = (Math.PI * 2) / segment;
 
@@ -44,6 +44,5 @@ export class Ellipse extends Object2D {
             new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
         );
     }
-    getWidth() { return 50 * this.scale.x }
-    getHeight() { return 50 * this.scale.y}
+    getRadius() { return radius * this.scale.x }
 }

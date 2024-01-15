@@ -31,7 +31,7 @@ export class Spectrograph {
             this.scene.add(R)
         });
         rectangle.setPosition(new Vector2(200, 200))
-        ellipse.setPosition(new Vector2(100, 100))
+        ellipse.setPosition(new Vector2(500, 200))
         // rectangle3.setPosition(new Vector2(10, 10))
         // // rectangle.setScale(new Vector2(1, 1))
         // // rectangle.setRotation(2)
@@ -48,14 +48,16 @@ export class Spectrograph {
     render(){
         const bind = this.render.bind(this)
         // rectangle2.setPosition(new Vector2(rectangle2.position.x + 1, rectangle2.position.y))
-        rectangle.setPosition(new Vector2(rectangle.position.x + 1, rectangle.position.y))
-
-        rectangle.setRotation(rectangle.rotation += 0.02)
+        // rectangle.setPosition(new Vector2(rectangle.position.x + 1, rectangle.position.y))
+        // rectangle.setRotation(rectangle.rotation += 0.02)
+        // rectangle.setScale(new Vector2(rectangle.scale.x + 0.01, rectangle.scale.y + 0.01))
         // test += 0.01
-        // rectangle.setScale(new Vector2(rectangle.scale.x + 0.01, rectangle.scale.y))
 
-        ellipse.setRotation(ellipse.rotation -= 0.01);
-        ellipse.setPosition(new Vector2(ellipse.position.x + 1, ellipse.position.y));
+
+        // ellipse.setRotation(ellipse.rotation -= 0.01);
+        // ellipse.setPosition(new Vector2(ellipse.position.x + 1, ellipse.position.y));
+        // ellipse.setScale(new Vector2(ellipse.scale.x + 0.001, ellipse.scale.y));
+
         this.renderer.render(this.scene, this.camera)
         requestAnimationFrame(bind);
     }
