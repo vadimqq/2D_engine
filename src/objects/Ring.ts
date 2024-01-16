@@ -5,30 +5,36 @@ import { Vector2 } from "../math/Vector2";
 
 const center = new Vector2(0, 0)
 const radius = 100;
+const innerRadius = 40;
 
-const segment = 8;
+const SEGMENTS = 8;
 
-export class Ellipse extends Object2D {
+export class Ring extends Object2D {
     constructor() {
         const points = [];
         const indices = [];
-        const step = (Math.PI * 2) / segment;
+        const step = (Math.PI * 1.4) / SEGMENTS;
 
-        for (let i = 0; i <= segment; i++) {
+        for (let i = 0; i <= SEGMENTS; i++) {
             const inc = step * i;
             const cos = Math.cos(inc);
             const sin = Math.sin(inc);
 
             const pointX = center.x + cos * radius;
             const pointY = center.y + sin * radius;
+            const innerPointX = center.x + cos * innerRadius;
+            const innerPointY = center.y + sin * innerRadius;
 
             points.push(pointX, pointY);
+            points.push(innerPointX, innerPointY);
 
-            indices.push(0, i + 1, i + 2);
-            // indices.push(i, i + 1, 0);
+            const start = i * 2;
+            indices.push(start, start + 1, start + 2);
+            indices.push(start + 1, start + 2, start + 3);
         }
-        // console.log(points);
-        // console.log(indices);
+
+        console.log(points);
+        console.log(indices);
 
         const geometry = new BufferGeometry();
 
@@ -37,7 +43,7 @@ export class Ellipse extends Object2D {
             data: points,
         };
         geometry.indices =  {
-            numComponents: 2,
+            numComponents: 3,
             data: indices,
         };
         super(

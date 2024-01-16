@@ -4,12 +4,14 @@ import { Ellipse } from "./objects/Ellipse";
 import { Mesh } from "./objects/Mesh";
 import { WebGLRenderer } from "./renderers/WebGLRenderer";
 import { Scene } from "./scene/Scene";
+import {Ring} from "./objects/Ring.ts";
 
 const rectangle = new Mesh();
 
 // const rectangle2 = new Mesh();
 
 const ellipse = new Ellipse();
+const ellipseEmpty = new Ring();
 
 //let test = 0
 
@@ -27,23 +29,25 @@ export class Spectrograph {
     init() {
         testArr.forEach(() => {
             const R = new Mesh();
-            R.setPosition(new Vector2(Math.floor(Math.random() * 500), Math.floor(Math.random() * 500)))
-            this.scene.add(R)
+            R.setPosition(new Vector2(Math.floor(Math.random() * 500), Math.floor(Math.random() * 500)));
+            this.scene.add(R);
         });
-        rectangle.setPosition(new Vector2(200, 200))
-        ellipse.setPosition(new Vector2(500, 200))
+        rectangle.setPosition(new Vector2(200, 200));
+        ellipse.setPosition(new Vector2(500, 200));
+        ellipseEmpty.setPosition(new Vector2(750, 200));
         // rectangle3.setPosition(new Vector2(10, 10))
         // // rectangle.setScale(new Vector2(1, 1))
         // // rectangle.setRotation(2)
 
-        this.scene.add(rectangle)
-        this.scene.add(ellipse)
+        this.scene.add(rectangle);
+        this.scene.add(ellipse);
+        this.scene.add(ellipseEmpty);
         // rectangle2.add(rectangle3)
         // // console.log(rectangle2.worldMatrix)
         // // rectangle2.setRotation(1)
-        this.render()
+        this.render();
 
-        this.camera.setScale(1)
+        //this.camera.setScale(10);
     }
     render(){
         const bind = this.render.bind(this)
