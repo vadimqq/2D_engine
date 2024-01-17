@@ -7,32 +7,34 @@ const radius = 50
 const innerRadius = 20;
 const segment = 100;
 const length = Math.PI * 2;
-const coefficient = length === Math.PI * 2 ? 2 : 0
 
 export class Ellipse extends Object2D {
     constructor() {
-        const points = [Math.sin(0) * innerRadius, Math.cos(0) * innerRadius];
+        const points = [0, innerRadius];
         const indices = [];
         const step = length / segment;
 
-        for (let i = 0; i <= segment + coefficient; i++) {
+        for (let i = 0; i <= segment; i++) {
+            let cos = Math.cos(step * i)
+            let sin = Math.sin(step * i)
+            let pointX;
+            let pointY;
+
             if (i % 2 === 0) {
-                const cos = Math.cos(step * i)
-                const sin = Math.sin(step * i)
-    
-                const pointX = sin  * radius;
-                const pointY = cos  * radius;
-                points.push(pointX, pointY);
-            } else {
-                const cos = Math.cos(step * i)
-                const sin = Math.sin(step * i)
-    
-                const pointX = sin  * innerRadius;
-                const pointY = cos  * innerRadius;
-    
-                points.push(pointX, pointY);
+                pointX = sin  * radius;
+                pointY = cos  * radius;
+            } else {    
+                pointX = sin  * innerRadius;
+                pointY = cos  * innerRadius;
             }
-           indices.push(i, i + 1, i + 2)
+
+            if (i >= segment - 1) {
+                pointX = Math.round(pointX / 10) * 10;
+                pointY = Math.round(pointY / 10) * 10;
+            }
+
+            points.push(pointX, pointY);
+            indices.push(i, i + 1, i + 2);
         }
 
         console.log({points, indices})
