@@ -5,18 +5,19 @@ import { Object2D } from "../core/Object2D";
         
 const radius = 50
 const innerRadius = 20;
-const segment = 100;
-const length = Math.PI * 2;
+const segment = 20;
+const length = Math.PI;
+const startPosition = 0;
 
 export class Ellipse extends Object2D {
     constructor() {
-        const points = [0, innerRadius];
+        const points = [Math.sin(0 + startPosition) * innerRadius, Math.cos(0 + startPosition) * innerRadius];
         const indices = [];
         const step = length / segment;
 
         for (let i = 0; i <= segment; i++) {
-            let cos = Math.cos(step * i)
-            let sin = Math.sin(step * i)
+            let cos = Math.cos(step * i + startPosition)
+            let sin = Math.sin(step * i + startPosition)
             let pointX;
             let pointY;
 
