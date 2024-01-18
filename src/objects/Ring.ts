@@ -7,17 +7,19 @@ const center = new Vector2(0, 0)
 const radius = 100;
 const innerRadius = 40;
 
-const SEGMENTS = 8;
+const SEGMENTS = 4;
 const ROUND = '50%';
+const START_DEG = 90;
 
 export class Ring extends Object2D {
     constructor() {
         const points = [];
         const indices = [];
         const step = (Math.PI * (parseFloat(ROUND) / 100 * 2)) / SEGMENTS;
+        const start_rad = START_DEG * Math.PI / 180;
 
         for (let i = 0; i <= SEGMENTS; i++) {
-            const inc = step * i;
+            const inc = step * i + start_rad;
             const cos = Math.cos(inc);
             const sin = Math.sin(inc);
 

@@ -35,9 +35,10 @@ export class Spectrograph {
         rectangle.setPosition(new Vector2(200, 200));
         ellipse.setPosition(new Vector2(500, 200));
         ellipseEmpty.setPosition(new Vector2(750, 200));
+        // ellipseEmpty.setRotation(0.2);
         // rectangle3.setPosition(new Vector2(10, 10))
-        // // rectangle.setScale(new Vector2(1, 1))
-        // // rectangle.setRotation(2)
+        // rectangle.setScale(new Vector2(1, 1))
+        // rectangle.setRotation(2)
 
         this.scene.add(rectangle);
         this.scene.add(ellipse);
