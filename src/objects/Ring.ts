@@ -8,12 +8,13 @@ const radius = 100;
 const innerRadius = 40;
 
 const SEGMENTS = 8;
+const ROUND = '50%';
 
 export class Ring extends Object2D {
     constructor() {
         const points = [];
         const indices = [];
-        const step = (Math.PI * 1.4) / SEGMENTS;
+        const step = (Math.PI * (parseFloat(ROUND) / 100 * 2)) / SEGMENTS;
 
         for (let i = 0; i <= SEGMENTS; i++) {
             const inc = step * i;
