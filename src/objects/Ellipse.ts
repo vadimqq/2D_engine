@@ -41,8 +41,8 @@ export class Ellipse extends Object2D {
             indices.push(0, i + 1, i + 2);
             // indices.push(i, i + 1, 0);
         }
-        // console.log(points);
-        // console.log(indices);
+        console.log(points);
+        console.log(indices);
 
         geometry.position = {
             numComponents: 2,

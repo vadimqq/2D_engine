@@ -1,7 +1,6 @@
 import { BufferGeometry } from "../core/BufferGeometry";
 import { Color } from "../core/Color";
 import { Object2D } from "../core/Object2D";
-import {Vector2} from "../math/Vector2.ts";
 
 export class Ring extends Object2D {
     private radius: number;
@@ -9,8 +8,7 @@ export class Ring extends Object2D {
     private segments: number;
     private round: number;
     private start_rad: number;
-    private center: Vector2;
-    constructor(center: Vector2, radius: number, innerRadius: number, segments: number, round: number, start_rad: number=0) {
+    constructor(radius: number, innerRadius: number, segments: number, round: number, start_rad: number=0) {
         const geometry = new BufferGeometry();
         super(
             geometry,
@@ -22,7 +20,6 @@ export class Ring extends Object2D {
         this.segments = segments;
         this.round = round;
         this.start_rad = start_rad;
-        this.center = center;
 
        this._init();
     }
@@ -38,10 +35,10 @@ export class Ring extends Object2D {
             const cos = Math.cos(inc);
             const sin = Math.sin(inc);
 
-            const pointX = this.center.x + cos * this.radius;
-            const pointY = this.center.y + sin * this.radius;
-            const innerPointX = this.center.x + cos * this.innerRadius;
-            const innerPointY = this.center.y + sin * this.innerRadius;
+            const pointX = cos * this.radius;
+            const pointY = sin * this.radius;
+            const innerPointX = cos * this.innerRadius;
+            const innerPointY = sin * this.innerRadius;
 
             points.push(pointX, pointY);
             points.push(innerPointX, innerPointY);
@@ -51,8 +48,8 @@ export class Ring extends Object2D {
             indices.push(start + 1, start + 2, start + 3);
         }
 
-        console.log(points);
-        console.log(indices);
+        // console.log(points);
+        // console.log(indices);
 
 
 

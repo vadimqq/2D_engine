@@ -10,8 +10,8 @@ const rectangle = new Mesh();
 
 // const rectangle2 = new Mesh();
 
-const ellipse = new Ellipse(new Vector2(0,0), 100, 80, 80, Math.PI / 2);
-const ellipseEmpty = new Ring(new Vector2(0,0), 100, 60, 80, 50);
+const ellipse = new Ellipse(new Vector2(0,0), 100, 6, 80);
+const ellipseEmpty = new Ring(100, 60, 80, 50);
 
 //let test = 0
 
