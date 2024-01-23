@@ -9,7 +9,7 @@ import { Scene } from "./scene/Scene";
 
 const rectangle2 = new Mesh();
 
-const ellipse = new Ellipse();
+const ellipse = new Ellipse({ radius: 50, innerRadius: 20, segment: 100, length: Math.PI * 2, startPosition: 0});
 
 let test = 0
 
@@ -56,6 +56,7 @@ export class Spectrograph {
         // rectangle.setScale(new Vector2(rectangle.scale.x + 0.01, rectangle.scale.y))
 
         this.renderer.render(this.scene, this.camera)
+        // ellipse.setLength(ellipse.options.length + Math.PI / 1000)
 	    requestAnimationFrame(bind);
     }
 }

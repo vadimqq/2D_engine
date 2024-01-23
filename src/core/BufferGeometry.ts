@@ -1,7 +1,15 @@
+interface Position {
+    numComponents: number;
+    data: number[]
+}
+
+interface Indices {
+    numComponents: number;
+    data: number[]
+}
 
 export class BufferGeometry {
-    position = { numComponents: 2, data: [0, 0, 50, 0, 0, 50, 50, 50], };
-    indices =  { numComponents: 2, data: [0, 1, 2, 1, 2, 3, ]};
-    constructor() {
-    }
+    position: Position = { numComponents: 2, data: []}
+    indices: Indices = { numComponents: 2, data: []}
+    constructor() {}
 }

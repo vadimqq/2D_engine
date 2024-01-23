@@ -3,7 +3,7 @@ import { Vector2 } from '../math/Vector2';
 import { BufferGeometry } from './BufferGeometry';
 import { Color } from './Color';
 
-export class Object2D {
+export class Object2D<Geometry extends BufferGeometry = BufferGeometry> {
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
 	needUpdateMatrix = true;
@@ -15,11 +15,11 @@ export class Object2D {
 	parent: Object2D | null = null;
 	children: Object2D[] = [];
 
-	geometry: BufferGeometry;
+	geometry: Geometry;
 
 	color: Color;
 
-	constructor(geometry: BufferGeometry, color: Color) {
+	constructor(geometry: Geometry, color: Color) {
 		this.geometry = geometry;
 		this.color = color;
 	}
