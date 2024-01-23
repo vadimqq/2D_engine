@@ -3,24 +3,38 @@ import { Color } from "../core/Color";
 import { Object2D } from "../core/Object2D";
 import { Vector2 } from "../math/Vector2";
 
-const center = new Vector2(0, 0)
-const radius = 100;
 
-const segment = 8;
 
 export class Ellipse extends Object2D {
-    constructor() {
-        const points = [];
-        const indices = [];
-        const step = (Math.PI * 2) / segment;
+    private radius: number;
+    private segments: number;
+    private round: number;
+    private start_rad: number;
+    private center: Vector2;
+    constructor(center: Vector2, radius: number, segments: number, round: number, start_rad: number=0) {
+        const geometry = new BufferGeometry();
+        super(
+            geometry,
+            new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
+        );
 
-        for (let i = 0; i <= segment; i++) {
-            const inc = step * i;
+        this.radius = radius;
+        this.segments = segments;
+        this.round = round;
+        this.start_rad = start_rad;
+        this.center = center;
+
+        const points = [0, 0];
+        const indices = [];
+        const step = (Math.PI * (this.round / 100 * 2)) / this.segments;
+
+        for (let i = 0; i <= this.segments; i++) {
+            const inc = step * i + this.start_rad;
             const cos = Math.cos(inc);
             const sin = Math.sin(inc);
 
-            const pointX = center.x + cos * radius;
-            const pointY = center.y + sin * radius;
+            const pointX = this.center.x + cos * this.radius;
+            const pointY = this.center.y + sin * this.radius;
 
             points.push(pointX, pointY);
 
@@ -30,8 +44,6 @@ export class Ellipse extends Object2D {
         // console.log(points);
         // console.log(indices);
 
-        const geometry = new BufferGeometry();
-
         geometry.position = {
             numComponents: 2,
             data: points,
@@ -40,10 +52,6 @@ export class Ellipse extends Object2D {
             numComponents: 2,
             data: indices,
         };
-        super(
-            geometry,
-            new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
-        );
     }
-    getRadius() { return radius * this.scale.x }
+    getRadius() { return this.radius * this.scale.x }
 }

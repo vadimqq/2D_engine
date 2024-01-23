@@ -10,8 +10,8 @@ const rectangle = new Mesh();
 
 // const rectangle2 = new Mesh();
 
-const ellipse = new Ellipse();
-const ellipseEmpty = new Ring();
+const ellipse = new Ellipse(new Vector2(0,0), 100, 80, 80, Math.PI / 2);
+const ellipseEmpty = new Ring(new Vector2(0,0), 100, 60, 80, 50);
 
 //let test = 0
 
@@ -43,6 +43,7 @@ export class Spectrograph {
         this.scene.add(rectangle);
         this.scene.add(ellipse);
         this.scene.add(ellipseEmpty);
+        ellipseEmpty.setRadius(40);
         // rectangle2.add(rectangle3)
         // // console.log(rectangle2.worldMatrix)
         // // rectangle2.setRotation(1)
