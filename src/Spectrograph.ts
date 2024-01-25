@@ -43,7 +43,6 @@ export class Spectrograph {
         this.scene.add(rectangle);
         this.scene.add(ellipse);
         this.scene.add(ellipseEmpty);
-        ellipseEmpty.setRadius(40);
         // rectangle2.add(rectangle3)
         // // console.log(rectangle2.worldMatrix)
         // // rectangle2.setRotation(1)

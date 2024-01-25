@@ -1,6 +1,6 @@
-import { BufferGeometry } from "../core/BufferGeometry";
 import { Color } from "../core/Color";
 import { Object2D } from "../core/Object2D";
+import {BufferGeometry} from "../core/BufferGeometry.ts";
 
 export class Ring extends Object2D {
     private radius: number;
@@ -21,11 +21,11 @@ export class Ring extends Object2D {
         this.round = round;
         this.start_rad = start_rad;
 
-       this._init();
+        this._init();
     }
 
     _init(){
-        const points = [];
+        const points = [0,0];
         const indices = [];
         const step = (Math.PI * (this.round / 100 * 2)) / this.segments;
         //const start_rad = START_DEG * Math.PI / 180;

@@ -8,6 +8,7 @@ import { createBufferInfoFromArrays } from '../utils';
 import { WebGLProgram } from './webgl/WebGLProgram';
 import { AttributeSetter } from './webgl/setters/AttributeSetter';
 import { UniformSetter } from './webgl/setters/UniformSetter';
+import {RayCaster} from "./RayCaster.ts";
 
 export class WebGLRenderer{
 	canvasElement: HTMLCanvasElement;
@@ -17,6 +18,7 @@ export class WebGLRenderer{
 	webGLProgram: WebGLProgram;
 	uniformSetter: UniformSetter;
 	attributeSetter: AttributeSetter;
+	rayCaster: RayCaster;
 	constructor(){
 		this.canvasElement = document.createElement('canvas')
         this.canvasElement.width = window.innerWidth
@@ -38,6 +40,8 @@ export class WebGLRenderer{
 			0, -2 / this.canvasElement.height, 0,	
 			-1, 1, 1
 		)
+
+		this.rayCaster = new RayCaster(this.canvasElement);
 	}
 	// getDelta(timeStamp: number) {
 	// 	const elapsed = timeStamp - this.lastTime;
@@ -77,6 +81,7 @@ export class WebGLRenderer{
 			if (object.children.length) {
 				this.objectsRender(object.children)
 			}
+			//this.rayCaster.findIntersect(object);
 		})
 	}
 }
