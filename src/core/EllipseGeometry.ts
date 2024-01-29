@@ -7,34 +7,29 @@ export class EllipseGeometry extends BufferGeometry {
     }
 
     update(options: IEllipse) {
-        const { radius, innerRadius, segment, length, startPosition } = options;
-        const points = [Math.sin(0 + startPosition) * innerRadius, Math.cos(0 + startPosition) * innerRadius];
+        const { radius, innerRadius, segments, length, startPosition } = options;
+        const points = [];
         const indices = [];
-        const step = length / segment;
+        const step = length / segments;
+        for (let i = 0; i <= segments; i++) {
+            const inc = step * i + startPosition;
+            const cos = Math.cos(inc);
+            const sin = Math.sin(inc);
 
-        for (let i = 0; i <= segment; i++) {
-            let cos = Math.cos(step * i + startPosition)
-            let sin = Math.sin(step * i + startPosition)
-            let pointX;
-            let pointY;
-
-            if (i % 2 === 0) {
-                pointX = sin  * radius;
-                pointY = cos  * radius;
-            } else {    
-                pointX = sin  * innerRadius;
-                pointY = cos  * innerRadius;
-            }
-
-            if (i >= segment - 1) {
-                pointX = Math.round(pointX / 10) * 10;
-                pointY = Math.round(pointY / 10) * 10;
-            }
+            const pointX = cos * radius;
+            const pointY = sin * radius;
+            const innerPointX = cos * innerRadius;
+            const innerPointY = sin * innerRadius
 
             points.push(pointX, pointY);
-            indices.push(i, i + 1, i + 2);
-        }
+            points.push(innerPointX, innerPointY);
 
+            const start = i * 2;
+            if (i !== segments) {
+                indices.push(start, start + 1, start + 2);
+                indices.push(start + 1, start + 2, start + 3);
+            }
+        }
         this.position.data = points;
         this.indices.data = indices;
 

@@ -6,22 +6,22 @@ import { Object2D } from "../core/Object2D";
 export interface IEllipse {
     radius: number;
     innerRadius: number;
-    segment: number;
+    segments: number;
     length: number;
     startPosition: number;
 }
         
 export class Ellipse extends Object2D<EllipseGeometry> {
     options: IEllipse;
-    constructor(options: IEllipse) {
+    constructor(radius: number, innerRadius: number, segments: number, length: number = Math.PI * 2, startPosition: number = 0) {
         const geometry = new EllipseGeometry();
         super(
             geometry,
             new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
         )
 
-        this.options = options;
-        geometry.update(options);
+        this.options = { radius, innerRadius, segments, length, startPosition };
+        geometry.update(this.options);
     }
 
     setLength(length: number) {

@@ -9,7 +9,7 @@ import { Scene } from "./scene/Scene";
 
 const rectangle2 = new Mesh();
 
-const ellipse = new Ellipse({ radius: 50, innerRadius: 20, segment: 100, length: Math.PI * 2, startPosition: 0});
+const ellipse = new Ellipse(50, 20, 4);
 
 let test = 0
 
