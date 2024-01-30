@@ -11,7 +11,7 @@ const rectangle = new Mesh();
 // const rectangle2 = new Mesh();
 
 const ellipse = new Ellipse(new Vector2(0,0), 100, 6, 80);
-const ellipseEmpty = new Ring(100, 60, 80, 50);
+const ellipseEmpty = new Ring(100, 30, 6, 100);
 
 //let test = 0
 
@@ -32,9 +32,9 @@ export class Spectrograph {
             R.setPosition(new Vector2(Math.floor(Math.random() * 500), Math.floor(Math.random() * 500)));
             this.scene.add(R);
         });
-        rectangle.setPosition(new Vector2(200, 200));
+        rectangle.setPosition(new Vector2(10, 10));
         ellipse.setPosition(new Vector2(500, 200));
-        ellipseEmpty.setPosition(new Vector2(750, 200));
+        ellipseEmpty.setPosition(new Vector2(600, 300));
         // ellipseEmpty.setRotation(0.2);
         // rectangle3.setPosition(new Vector2(10, 10))
         // rectangle.setScale(new Vector2(1, 1))

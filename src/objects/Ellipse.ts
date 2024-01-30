@@ -51,5 +51,6 @@ export class Ellipse extends Object2D {
             data: indices,
         };
     }
-    getRadius() { return this.radius * this.scale.x }
+    getWidth() { return this.radius * 2 * this.scale.x }
+    getHeight() { return this.getWidth() }
 }

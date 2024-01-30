@@ -25,7 +25,7 @@ export class Ring extends Object2D {
     }
 
     _init(){
-        const points = [0,0];
+        const points = [];
         const indices = [];
         const step = (Math.PI * (this.round / 100 * 2)) / this.segments;
         //const start_rad = START_DEG * Math.PI / 180;
@@ -62,7 +62,8 @@ export class Ring extends Object2D {
             data: indices,
         };
     }
-    getRadius() { return this.radius * this.scale.x }
+    getWidth() { return this.radius * 2 * this.scale.x }
+    getHeight() { return this.getWidth() }
 
     setRadius(r:number) {
         this.radius = r;

@@ -81,7 +81,7 @@ export class WebGLRenderer{
 			if (object.children.length) {
 				this.objectsRender(object.children)
 			}
-			//this.rayCaster.findIntersect(object);
+			this.rayCaster.findIntersect(object);
 		})
 	}
 }
