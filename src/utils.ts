@@ -1,4 +1,4 @@
-import { BufferGeometry } from "./core/BufferGeometry";
+import { BufferGeometry } from "./core/BufferGeometry/BufferGeometry";
 
 export const getBindPointForSamplerType = (gl: WebGL2RenderingContext, type: number) => {
     if (type === gl.SAMPLER_2D)   return gl.TEXTURE_2D;        // eslint-disable-line

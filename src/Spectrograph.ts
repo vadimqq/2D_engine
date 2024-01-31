@@ -1,60 +1,53 @@
 import { Camera } from "./camera/Camera";
-import { Vector2 } from "./math/Vector2";
-import { Ellipse } from "./objects/Ellipse";
-import { Mesh } from "./objects/Mesh";
+import { ControlNode } from "./controlNode/controlNode";
+import { NodeManager } from "./core/NodeManager/NodeManager";
+import { PluginManager } from "./core/PluginManager/PluginManager";
+import { SystemExtensionManager } from "./core/SystemExtensionManager/SystemExtensionManager";
+import { ToolManager } from "./core/ToolManager/ToolManager";
+import { RectanglePlugin } from "./plugins/RectanglePlugin/RectanglePlugin";
 import { WebGLRenderer } from "./renderers/WebGLRenderer";
 import { Scene } from "./scene/Scene";
-
-// const rectangle = new Mesh();
-
-const rectangle2 = new Mesh();
-
-const ellipse = new Ellipse();
-
-let test = 0
-
-const testArr = Array.from(Array(0).keys())
 
 export class Spectrograph {
     renderer: WebGLRenderer;
     scene: Scene;
     camera: Camera;
+    systemExtensionManager: SystemExtensionManager;
+    nodeManager = new NodeManager();
+    toolManager: ToolManager;
+    pluginManager: PluginManager;
+    controlNode = new ControlNode();
     constructor(){
         this.renderer = new WebGLRenderer()
         this.scene = new Scene();
         this.camera = new Camera();
+
+        //Регистрация системных зависимостей
+        this.systemExtensionManager = new SystemExtensionManager({
+            renderer: this.renderer,
+            scene: this.scene,
+            camera: this.camera,
+        });
+
+        this.toolManager = new ToolManager(this.systemExtensionManager)
+
+        //Регистрация плагинов
+        this.pluginManager = new PluginManager({
+            renderer: this.renderer,
+            scene: this.scene,
+            camera: this.camera,
+            nodeManager: this.nodeManager,
+            systemExtensionManager: this.systemExtensionManager,
+            toolManager: this.toolManager,
+        })
+        this.pluginManager.addPlugin(RectanglePlugin)
     }
     init() {
-        testArr.forEach(element => {
-            const R = new Mesh();
-            R.setPosition(new Vector2(Math.floor(Math.random() * 500), Math.floor(Math.random() * 500)))
-            this.scene.add(R)
-        });
-        // rectangle.setPosition(new Vector2(100, 100))
-        ellipse.setPosition(new Vector2(100, 100))
-        // rectangle3.setPosition(new Vector2(10, 10))
-        // // rectangle.setScale(new Vector2(1, 1))
-        // // rectangle.setRotation(2)
-
-        // this.scene.add(rectangle)
-        this.scene.add(ellipse)
-        // rectangle2.add(rectangle3)
-        // // console.log(rectangle2.worldMatrix)
-        // // rectangle2.setRotation(1)
         this.render()
-
-        this.camera.setScale(1)
-
+        console.log(this)
     }
     render(){
         const bind = this.render.bind(this)
-        // rectangle2.setPosition(new Vector2(rectangle2.position.x + 1, rectangle2.position.y))
-        // rectangle.setPosition(new Vector2(rectangle.position.x + 1, rectangle.position.y))
-
-        // rectangle.setRotation(test)
-        // test += 0.01
-        // rectangle.setScale(new Vector2(rectangle.scale.x + 0.01, rectangle.scale.y))
-
         this.renderer.render(this.scene, this.camera)
 	    requestAnimationFrame(bind);
     }

@@ -18,7 +18,6 @@ export class Camera {
 
     computedMatrix() {
 		this.matrix.identity()
-
 		this.matrix.scale(this.scale, this.scale)
 		this.matrix.translate(-this.position.x, -this.position.y);
 

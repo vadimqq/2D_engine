@@ -1,5 +1,7 @@
 
-import { Object2D } from '../core/Object2D';
+import { Camera } from '../camera/Camera';
+import { BufferGeometry } from '../core/BufferGeometry/BufferGeometry';
+import { Node } from '../core/Node/Node';
 import { Matrix3 } from '../math/Matrix3';
 import { Scene } from '../scene/Scene';
 import fs from '../shaders/fs';
@@ -45,7 +47,7 @@ export class WebGLRenderer{
 	// 	return elapsed
 	// }
 
-	render(scene: Scene, camera: any) {
+	render(scene: Scene, camera: Camera) {
 		this.gl.viewport(0,0, this.canvasElement.width, this.canvasElement.height);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 		
@@ -57,11 +59,11 @@ export class WebGLRenderer{
 
 		scene.worldMatrix.copy(this.projectionMatrix)
 		scene.worldMatrix.multiply(camera.computedMatrix())
-
+		scene.needUpdateMatrix = true
 		this.gl.useProgram(this.webGLProgram.program);
 		this.objectsRender(scene.children)
 	}
-	objectsRender(objects: Object2D[]) {
+	objectsRender(objects: Node<BufferGeometry>[]) {
 		objects.forEach(object => {
 			const uniformsThatAreComputedForEachObject = {
 				u_matrix: object.computeWorldMatrix().toArray(),
