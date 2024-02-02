@@ -5,6 +5,7 @@ import { Color } from '../Color';
 import { EVENTS_NAME, NodeEvents } from './model';
 
 export class Node<G>  extends EventEmitter<NodeEvents>{
+	guid: number;
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
 	needUpdateMatrix = true;
@@ -17,10 +18,14 @@ export class Node<G>  extends EventEmitter<NodeEvents>{
 	geometry: G;
 	color: Color;
 
-	constructor(geometry: G, color: Color) {
+	constructor(geometry: G, color: Color, transform?: [number, number, number, number, number, number, number, number, number,]) {
 		super();
+		this.guid = Math.floor(Math.random() * 10000000)
 		this.geometry = geometry;
 		this.color = color;
+		if (transform) {
+			this.localMatrix.set(...transform)
+		}
 	}
 
 	add_child(object: Node<G>) {
@@ -58,5 +63,8 @@ export class Node<G>  extends EventEmitter<NodeEvents>{
 
 	getWorldPosition() {
 		return new Vector2(this.worldMatrix.elements[2], this.worldMatrix.elements[5])
+	}
+	getChildrenByGuid(guid: number) {
+		return this.children.find((node) => node.guid === guid)
 	}
 }

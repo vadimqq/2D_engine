@@ -2,6 +2,7 @@ import { Camera } from "./camera/Camera";
 import { ControlNode } from "./controlNode/controlNode";
 import { NodeManager } from "./core/NodeManager/NodeManager";
 import { PluginManager } from "./core/PluginManager/PluginManager";
+import { StreamManager } from "./core/StreamManager/StreamManager";
 import { SystemExtensionManager } from "./core/SystemExtensionManager/SystemExtensionManager";
 import { ToolManager } from "./core/ToolManager/ToolManager";
 import { RectanglePlugin } from "./plugins/RectanglePlugin/RectanglePlugin";
@@ -17,6 +18,7 @@ export class Spectrograph {
     toolManager: ToolManager;
     pluginManager: PluginManager;
     controlNode = new ControlNode();
+    streamsManager = new StreamManager();
     constructor(){
         this.renderer = new WebGLRenderer()
         this.scene = new Scene();
@@ -27,6 +29,7 @@ export class Spectrograph {
             renderer: this.renderer,
             scene: this.scene,
             camera: this.camera,
+            streamManger: this.streamsManager,
         });
 
         this.toolManager = new ToolManager(this.systemExtensionManager)

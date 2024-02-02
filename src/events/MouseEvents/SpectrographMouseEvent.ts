@@ -8,23 +8,16 @@ export class SpectrographMouseEvent {
     nativeEvent: MouseEvent | PointerEvent | TouchEvent;
     positionOnSceneX = 0;
     positionOnSceneY = 0;
-    intersectNodes = [];
+    intersectNodes: Node<BufferGeometry>[] = [];
 
     constructor(nativeEvent: MouseEvent | PointerEvent | TouchEvent, camera: Camera, scene: Scene) {
         this.nativeEvent = nativeEvent;
         this.camera = camera;
         this._mapPositionToScene()
-        this.testIntersect(scene)
-        // console.log(nativeEvent)
     }
 
     private _mapPositionToScene(): void {
         this.positionOnSceneX = (this.nativeEvent.offsetX) / this.camera.scale + this.camera.position.x
         this.positionOnSceneY = (this.nativeEvent.offsetY ) / this.camera.scale + this.camera.position.y
-    }
-
-
-    testIntersect(node: Node<BufferGeometry>){
-            console.log(node.getWorldPosition(), node.size)
     }
 }

@@ -1,7 +1,5 @@
-import { Camera } from "../../camera/Camera";
 import { MouseEventSystem } from "../../events/MouseEvents/MouseEventSystem";
-import { WebGLRenderer } from "../../renderers/WebGLRenderer";
-import { Scene } from "../../scene/Scene";
+import { ExtensionInitOptions } from "./Extension";
 
 export class SystemExtensionManager {
     // private renderer: WebGLRenderer;
@@ -10,11 +8,7 @@ export class SystemExtensionManager {
 
     private MOUSE_EVENT_SYSTEM: MouseEventSystem;
 
-    constructor(options: {
-        renderer: WebGLRenderer;
-        scene: Scene;
-        camera: Camera;
-    }) {
+    constructor(options: ExtensionInitOptions) {
         // this.renderer = options.renderer
         // this.scene = options.scene
         // this.camera = options.camera

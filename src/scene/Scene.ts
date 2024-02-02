@@ -9,5 +9,6 @@ export class Scene extends Node<BufferGeometry> {
         const geometry = new BufferGeometry()
         const color = new Color({r: 0, g: 0, b: 0, a:1})
         super(geometry, color);
+        this.size.set(1000, 1000)
     }
 }

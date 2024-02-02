@@ -13,8 +13,17 @@ export class RectanglePlugin implements Plugin {
         options.toolManager.registerNewTool('RECTANGLE_TOOL', new RectangleTool(options.nodeManager))
         options.toolManager.setTool('RECTANGLE_TOOL')
         options.nodeManager.registerNewNode('RECTANGLE', Rectangle)
-        const newRect = new Rectangle()
-        options.scene.add_child(newRect)
+        const arr = [...Array(20).keys()];
+
+        arr.forEach(() => {
+            const rect = new Rectangle([
+                1, 0, 0,
+                0, 1, 0,
+                Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000), 1
+            ])
+
+            options.scene.add_child(rect)
+        })
     }
 
     init() {}
