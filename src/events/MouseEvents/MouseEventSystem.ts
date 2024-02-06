@@ -1,16 +1,18 @@
 import EventEmitter from "eventemitter3";
 import { Camera } from "../../camera/Camera";
+import { ControlNode } from "../../controlNode/controlNode";
 import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Node } from "../../core/Node/Node";
 import { StreamManager } from "../../core/StreamManager/StreamManager";
 import { Extension, ExtensionInitOptions } from "../../core/SystemExtensionManager/Extension";
-import { WebGLRenderer } from "../../renderers/WebGLRenderer";
+import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { SpectrographMouseEvent } from "./SpectrographMouseEvent";
 
 interface mouseEvents {
     _onPointerDown: [event: SpectrographMouseEvent];
-    _onPointerMove: [event: SpectrographMouseEvent]
+    _onPointerMove: [event: SpectrographMouseEvent];
+    _onPointerUp: [event: SpectrographMouseEvent];
 }
 export class MouseEventSystem extends EventEmitter<mouseEvents> implements Extension {
     name = 'MOUSE_EVENT_SYSTEM'
@@ -19,20 +21,28 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
     public camera: Camera;
     public scene: Scene;
     public streamManager: StreamManager;
+    public controlNode: ControlNode;
 
-    constructor({renderer, camera, scene, streamManger}: ExtensionInitOptions) {
+
+    mouseEvent: SpectrographMouseEvent;
+
+    constructor({renderer, camera, scene, streamManger, controlNode}: ExtensionInitOptions) {
         super()
         this.renderer = renderer;
         this.camera = camera;
         this.scene = scene;
         this.domElement = renderer.canvasElement // как заглушка для тайпскрипта
         this.streamManager = streamManger
+        this.mouseEvent = new SpectrographMouseEvent(this.camera, this.scene)
+        this.controlNode = controlNode
 
         this._onPointerDown = this._onPointerDown.bind(this);
         this._onPointerMove = this._onPointerMove.bind(this);
+        this._onPointerUp = this._onPointerUp.bind(this);
+
         // this._onPointerUp = this._onPointerUp.bind(this);
         // this._onPointerOverOut = this._onPointerOverOut.bind(this);
-        this._onWheel = this._onWheel.bind(this);
+        // this._onWheel = this._onWheel.bind(this);
         // const stream = this.streamManager.getCollisionStream()
 
         // stream.onmessage = (ev) => {
@@ -60,10 +70,11 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
 
                 this.domElement.addEventListener('mousemove', this._onPointerMove, true);
                 this.domElement.addEventListener('mousedown', this._onPointerDown, true);
+                this.domElement.addEventListener('mouseup', this._onPointerUp, true);
+
             //     this.domElement.addEventListener('mouseout', this._onPointerOverOut, true);
             //     this.domElement.addEventListener('mouseover', this._onPointerOverOut, true);
             //     globalThis.addEventListener('mouseup', this._onPointerUp, true);
-                this.domElement.addEventListener('wheel', this._onWheel, true);
     
         }
     
@@ -73,114 +84,50 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
     
             this.domElement.removeEventListener('mousemove', this._onPointerMove, true);
             this.domElement.removeEventListener('mousedown', this._onPointerDown, true);
+            this.domElement.removeEventListener('mouseup', this._onPointerUp, true);
+
             //     this.domElement.removeEventListener('mouseout', this._onPointerOverOut, true);
             //     this.domElement.removeEventListener('mouseover', this._onPointerOverOut, true);
-            //     globalThis.removeEventListener('mouseup', this._onPointerUp, true);
     
-            this.domElement.removeEventListener('wheel', this._onWheel, true);
+            // this.domElement.removeEventListener('wheel', this._onWheel, true);
     
         }
 
         private _onPointerDown(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void {
-            const event = new SpectrographMouseEvent(nativeEvent, this.camera, this.scene);
-            this.testIntersect([this.scene], event)
-            this.emit('_onPointerDown', event)
+            this.mouseEvent.updateEventInfo(nativeEvent)
+            this.mouseEvent.isMouseDown = true;
+            this.testIntersect([this.scene, this.controlNode], this.mouseEvent)
+            this.emit('_onPointerDown', this.mouseEvent)
         }
 
         private _onPointerMove(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void {
-            const event = new SpectrographMouseEvent(nativeEvent, this.camera, this.scene);   
+            this.mouseEvent.updateEventInfo(nativeEvent)
+            this.testIntersect([this.scene, this.controlNode], this.mouseEvent)
+            this.emit('_onPointerMove', this.mouseEvent)
+        }
 
-            this.emit('_onPointerMove', event)
+        private _onPointerUp(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void {
+            this.mouseEvent.isMouseDown = false;
+            this.mouseEvent.updateEventInfo(nativeEvent)
+            this.emit('_onPointerUp', this.mouseEvent)
         }
 
         testIntersect(nodeList: Node<BufferGeometry>[], event: SpectrographMouseEvent) {
-            const stream = this.streamManager.getCollisionStream()
-            stream.postMessage({
-                point: { x: event.positionOnSceneX, y: event.positionOnSceneY },
-                nodeList: nodeList
-            })
-            console.log(nodeList)
-            stream.onmessage = (ev) => {
-                console.log(ev)
-            }
-                // const isIntersect = (event.positionOnSceneX > vec.x && event.positionOnSceneX < node.size.x + vec.x) && (event.positionOnSceneY > vec.y && event.positionOnSceneY < node.size.y + vec.y)
-                // if (isIntersect) {
-                //     event.intersectNodes.push(node)
-                //     this.testIntersect(node.children, event)
-                // }
-        }
-    
-        // private _onPointerMove(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void {
-        //     const event = new SpectrographMouseEvent(nativeEvent, this.camera);
-        // }
-        // {
-        //     if (!this.features.move) return;
-        //     this.rootBoundary.rootTarget = this.renderer.lastObjectRendered;
-    
-        //     EventsTicker.pointerMoved();
-    
-        //     const normalizedEvents = this._normalizeToPointerData(nativeEvent);
-    
-        //     for (let i = 0, j = normalizedEvents.length; i < j; i++)
-        //     {
-        //         const event = this._bootstrapEvent(this._rootPointerEvent, normalizedEvents[i]);
-    
-        //         this.rootBoundary.mapEvent(event);
-        //     }
-    
-        //     this.setCursor(this.rootBoundary.cursor);
-        // }
-    
-        // private _onPointerUp(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void
-        // {
-        //     if (!this.features.click) return;
-        //     this.rootBoundary.rootTarget = this.renderer.lastObjectRendered;
-    
-        //     let target = nativeEvent.target;
-    
-        //     // if in shadow DOM use composedPath to access target
-        //     if (nativeEvent.composedPath && nativeEvent.composedPath().length > 0)
-        //     {
-        //         target = nativeEvent.composedPath()[0];
-        //     }
-    
-        //     const outside = target !== this.domElement ? 'outside' : '';
-        //     const normalizedEvents = this._normalizeToPointerData(nativeEvent);
-    
-        //     for (let i = 0, j = normalizedEvents.length; i < j; i++)
-        //     {
-        //         const event = this._bootstrapEvent(this._rootPointerEvent, normalizedEvents[i]);
-    
-        //         event.type += outside;
-    
-        //         this.rootBoundary.mapEvent(event);
-        //     }
-    
-        //     this.setCursor(this.rootBoundary.cursor);
-        // }
-       
-        // private _onPointerOverOut(nativeEvent: MouseEvent | PointerEvent | TouchEvent): void
-        // {
-        //     if (!this.features.click) return;
-        //     this.rootBoundary.rootTarget = this.renderer.lastObjectRendered;
-    
-        //     const normalizedEvents = this._normalizeToPointerData(nativeEvent);
-    
-        //     for (let i = 0, j = normalizedEvents.length; i < j; i++)
-        //     {
-        //         const event = this._bootstrapEvent(this._rootPointerEvent, normalizedEvents[i]);
-    
-        //         this.rootBoundary.mapEvent(event);
-        //     }
-    
-        //     this.setCursor(this.rootBoundary.cursor);
-        // }
-    
-        protected _onWheel(nativeEvent: WheelEvent): void {
-            const event = new SpectrographMouseEvent(nativeEvent, this.camera, this.scene);
-            // this.camera.setPosition(this.camera.position.x + nativeEvent.deltaX, this.camera.position.y + nativeEvent.deltaY)
-        }
+            event.intersectNodes = []
+            const intersects = findIntersect(nodeList, event.scenePosition )
 
-    
+             event.intersectNodes = intersects
+        }
 }
 
+
+const findIntersect = (nodeList: Node<BufferGeometry>[], eventPoint: {x: number, y: number}, intersectedLayers: Node<BufferGeometry>[] = []) => {
+    nodeList.forEach((node) => {
+        const isIntersect = (eventPoint.x > node.localMatrix.elements[6] && eventPoint.x < node.size.x + node.localMatrix.elements[6]) && (eventPoint.y > node.localMatrix.elements[7] && eventPoint.y < node.size.y + node.localMatrix.elements[7])
+        if (isIntersect) {
+            intersectedLayers.push(node)
+            findIntersect(node.children, eventPoint, intersectedLayers)
+        }
+    });
+    return intersectedLayers
+}

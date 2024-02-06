@@ -1,5 +1,6 @@
 import { Camera } from "../../camera/Camera";
-import { WebGLRenderer } from "../../renderers/WebGLRenderer";
+import { ControlNode } from "../../controlNode/controlNode";
+import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { ClassType } from "../../utils/models";
 import { NodeManager } from "../NodeManager/NodeManager";
@@ -14,7 +15,8 @@ export class PluginManager {
     private nodeManager: NodeManager;
     private systemExtensionManager: SystemExtensionManager;
     private toolManager: ToolManager;
-
+    private controlNode: ControlNode;
+    
     plugins: Map<string, Plugin> = new Map()
 
     constructor(options: PluginInitOptions) {
@@ -24,6 +26,7 @@ export class PluginManager {
         this.nodeManager = options.nodeManager
         this.systemExtensionManager = options.systemExtensionManager
         this.toolManager = options.toolManager
+        this.controlNode = options.controlNode
     }
 
     addPlugin(NewPlugin: ClassType<Plugin>) {
@@ -32,6 +35,7 @@ export class PluginManager {
             scene: this.scene,
             camera: this.camera,
             nodeManager: this.nodeManager,
+            controlNode: this.controlNode,
             systemExtensionManager: this.systemExtensionManager,
             toolManager: this.toolManager
         }) as Plugin

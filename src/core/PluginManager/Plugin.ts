@@ -1,5 +1,6 @@
 import { Camera } from "../../camera/Camera";
-import { WebGLRenderer } from "../../renderers/WebGLRenderer";
+import { ControlNode } from "../../controlNode/controlNode";
+import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { NodeManager } from "../NodeManager/NodeManager";
 import { SystemExtensionManager } from "../SystemExtensionManager/SystemExtensionManager";
@@ -18,4 +19,5 @@ export type PluginInitOptions = {
     nodeManager: NodeManager;
     systemExtensionManager: SystemExtensionManager;
     toolManager: ToolManager;
+    controlNode: ControlNode;
 }

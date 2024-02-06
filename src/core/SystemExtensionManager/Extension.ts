@@ -1,5 +1,6 @@
 import { Camera } from "../../camera/Camera";
-import { WebGLRenderer } from "../../renderers/WebGLRenderer";
+import { ControlNode } from "../../controlNode/controlNode";
+import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { StreamManager } from "../StreamManager/StreamManager";
 
@@ -14,4 +15,5 @@ export type ExtensionInitOptions = {
     scene: Scene;
     camera: Camera;
     streamManger: StreamManager;
+    controlNode: ControlNode;
 }

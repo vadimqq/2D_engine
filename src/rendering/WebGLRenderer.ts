@@ -1,5 +1,6 @@
 
 import { Camera } from '../camera/Camera';
+import { ControlNode } from '../controlNode/controlNode';
 import { BufferGeometry } from '../core/BufferGeometry/BufferGeometry';
 import { Node } from '../core/Node/Node';
 import { Matrix3 } from '../math/Matrix3';
@@ -47,7 +48,7 @@ export class WebGLRenderer{
 	// 	return elapsed
 	// }
 
-	render(scene: Scene, camera: Camera) {
+	render(scene: Scene, camera: Camera, controlNode: ControlNode) {
 		this.gl.viewport(0,0, this.canvasElement.width, this.canvasElement.height);
 		this.gl.clear(this.gl.COLOR_BUFFER_BIT);
 		
@@ -59,9 +60,13 @@ export class WebGLRenderer{
 
 		scene.worldMatrix.copy(this.projectionMatrix)
 		scene.worldMatrix.multiply(camera.computedMatrix())
-		scene.needUpdateMatrix = true
+		scene.needUpdateMatrix = false
 		this.gl.useProgram(this.webGLProgram.program);
-		this.objectsRender(scene.children)
+		const renderList: Node<BufferGeometry>[] = [scene]
+		if (controlNode.isVisible) {
+			renderList.push(controlNode)
+		}
+		this.objectsRender(renderList)
 	}
 	objectsRender(objects: Node<BufferGeometry>[]) {
 		objects.forEach(object => {
@@ -73,7 +78,6 @@ export class WebGLRenderer{
 			this.attributeSetter.setBuffersAndAttributes(bufferInfo);
 			
 			this.uniformSetter.setUniforms(uniformsThatAreComputedForEachObject)
-
 			this.gl.drawElements(this.gl.TRIANGLES, bufferInfo.numElements, this.gl.UNSIGNED_SHORT, 0);
 
 			if (object.children.length) {

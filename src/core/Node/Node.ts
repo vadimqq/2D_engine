@@ -1,50 +1,64 @@
 import EventEmitter from 'eventemitter3';
 import { Matrix3 } from '../../math/Matrix3';
 import { Vector2 } from '../../math/Vector2';
+import { BufferGeometry } from '../BufferGeometry/BufferGeometry';
 import { Color } from '../Color';
-import { EVENTS_NAME, NodeEvents } from './model';
+import { NodeEvents } from './model';
 
-export class Node<G>  extends EventEmitter<NodeEvents>{
+type AnyEvent = {
+    [K: ({} & string) | ({} & symbol)]: any;
+}
+
+export enum NODE_SYSTEM_TYPE {
+	SCENE = 'SCENE',
+	CONTROL_NODE = 'CONTROL_NODE',
+	GRAPHICS = 'GRAPHICS'
+}
+
+export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
 	guid: number;
+	systemType: NODE_SYSTEM_TYPE;
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
 	needUpdateMatrix = true;
 	size = new Vector2(1, 1)
 	
-	parent: Node<G> | null = null;
-	children: Node<G>[] = [];
-	hitArea = null; // Область фигуры для поиска пересечений
+	parent: Node<BufferGeometry> | null = null;
+	children: Node<BufferGeometry>[] = [];
 
 	geometry: G;
 	color: Color;
 
-	constructor(geometry: G, color: Color, transform?: [number, number, number, number, number, number, number, number, number,]) {
+	isIntractable = true
+
+	constructor(options: { geometry: G; color: Color; transform?: [number, number, number, number, number, number, number, number, number,]; systemType: NODE_SYSTEM_TYPE;}) {
 		super();
+		this.systemType = options.systemType 
 		this.guid = Math.floor(Math.random() * 10000000)
-		this.geometry = geometry;
-		this.color = color;
-		if (transform) {
-			this.localMatrix.set(...transform)
+		this.geometry = options.geometry;
+		this.color = options.color;
+		if (options.transform) {
+			this.localMatrix.set(...options.transform)
 		}
 	}
 
-	add_child(object: Node<G>) {
+	add_child(object: Node<BufferGeometry>) {
 		if (object.parent !== null) {
 			object.parent.remove_child(object);
 		}
 		object.parent = this;
 		this.children.push(object);
-		this.emit(EVENTS_NAME.CHILD_ADDED, object, this, this.children.length - 1);
-        object.emit(EVENTS_NAME.ADDED, this);
+		this.emit('child_added', object, this, this.children.length - 1);
+        object.emit('added', this);
 	}
 
-	remove_child(object: Node<G>) {
+	remove_child(object: Node<BufferGeometry>) {
 		const index = this.children.indexOf( object );
 		if (index > -1) {
 			this.children.splice( index, 1 );
 			object.parent = null;
-			this.emit(EVENTS_NAME.CHILD_REMOVED, object, this, index);
-			object.emit(EVENTS_NAME.REMOVED, this);
+			this.emit('child_removed', object, this, index);
+			object.emit('removed', this);
 		}
 	}
 
@@ -65,6 +79,11 @@ export class Node<G>  extends EventEmitter<NodeEvents>{
 		return new Vector2(this.worldMatrix.elements[2], this.worldMatrix.elements[5])
 	}
 	getChildrenByGuid(guid: number) {
+		// console.log(guid)
 		return this.children.find((node) => node.guid === guid)
+	}
+
+	setSize(x: number, y: number) {
+		this.size.set(x, y)
 	}
 }

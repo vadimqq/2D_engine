@@ -1,14 +1,22 @@
-import { BufferGeometry } from "../core/BufferGeometry/BufferGeometry";
 import { Color } from "../core/Color";
-import { Node } from "../core/Node/Node";
+import { NODE_SYSTEM_TYPE, Node } from "../core/Node/Node";
+import { SceneGeometry } from "./SceneGeometry";
 
-export class Scene extends Node<BufferGeometry> {
+export class Scene extends Node<SceneGeometry> {
     type = 'Scene';
-    backgroundColor = null;
+    backgroundColor: null = null;
     constructor(){
-        const geometry = new BufferGeometry()
-        const color = new Color({r: 0, g: 0, b: 0, a:1})
-        super(geometry, color);
-        this.size.set(1000, 1000)
+        super({
+            geometry: new SceneGeometry(), 
+            color: new Color({
+                r: 239 / 255,
+                g: 239 / 255,
+                b: 239 / 255,
+                a: 1,
+            }),
+            systemType: NODE_SYSTEM_TYPE.SCENE
+        });
+        this.size.set(130000, 130000)
+        this.geometry.updateGeometry(this.size)
     }
 }
