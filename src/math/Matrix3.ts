@@ -1,3 +1,5 @@
+import { Vector2 } from "./Vector2";
+
 export class Matrix3 {
 	elements = [
 		1, 0, 0,
@@ -83,9 +85,39 @@ export class Matrix3 {
 				m.elements[3], m.elements[4], m.elements[5],
 				m.elements[6], m.elements[7], m.elements[8],
 			)
+			return this
+		}
+		clone(): Matrix3 {
+			return new Matrix3().copy(this);
 		}
 		toArray() {
 			return this.elements
 		}
+		setPosition(vec: Vector2) {
+			this.set(
+				1, 0, 0,
+				0, 1, 0,
+				vec.x, vec.y, 1,
+			)
+			return this
+		}
+
+	public invert() {
+		const a1 = this.elements[0];
+		const b1 =  this.elements[1];
+		const c1 =  this.elements[3];
+		const d1 =  this.elements[4];
+		const tx1 =  this.elements[6];
+		const n = (a1 * d1) - (b1 * c1);
+	
+		this.elements[0] = d1 / n;
+		this.elements[1] = -b1 / n;
+		this.elements[3] = -c1 / n;
+		this.elements[4] = a1 / n;
+		this.elements[6] = ((c1 * this.elements[7]) - (d1 * tx1)) / n;
+		this.elements[7] = -((a1 * this.elements[7]) - (b1 * tx1)) / n;
+	
+		return this;
+	}
 }
 const _m3 = new Matrix3()

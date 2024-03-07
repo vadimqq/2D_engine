@@ -1,12 +1,12 @@
 
-import { BufferGeometry } from "../core/BufferGeometry";
-import { Color } from "../core/Color";
-import { Object2D } from "../core/Object2D";
+import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
+import { Color } from "../../core/Color";
+import { Node } from "../../core/Node/Node";
         
 const radius = 50
 const segment = 100
 
-export class Ellipse extends Object2D {
+export class Ellipse extends Node<BufferGeometry> {
     constructor() {
         const points = [0, 0]
         const indices = []
@@ -41,6 +41,4 @@ export class Ellipse extends Object2D {
             new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
         )
     }
-    getWidth() { return 50 * this.scale.x }
-    getHeight() { return 50 * this.scale.y}
 }

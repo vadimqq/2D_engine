@@ -1,0 +1,3 @@
+export enum SHADER_TYPE {
+    PRIMITIVE = 'PRIMITIVE'
+}
