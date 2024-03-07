@@ -6,7 +6,7 @@ import { Scene } from "../../scene/Scene";
 
 export class SpectrographMouseEvent {
     private camera: Camera
-    nativeEvent: MouseEvent | PointerEvent | TouchEvent;
+    nativeEvent: MouseEvent | PointerEvent | TouchEvent | WheelEvent;
     scenePosition = new Vector2();
     intersectNodes: Node<BufferGeometry>[] = [];
     isMouseDown = false;
@@ -28,8 +28,8 @@ export class SpectrographMouseEvent {
 
     private _mapPositionToScene(): void {
         this.scenePosition.set(
-            (this.nativeEvent.offsetX) / this.camera.scale + this.camera.position.x,
-            (this.nativeEvent.offsetY ) / this.camera.scale + this.camera.position.y
+            (this.nativeEvent.offsetX) / this.camera.zoom + this.camera.position.x,
+            (this.nativeEvent.offsetY ) / this.camera.zoom + this.camera.position.y
         )
     }
 
@@ -39,7 +39,6 @@ export class SpectrographMouseEvent {
     getFirstGraphicsNode() {
         for (let i = this.intersectNodes.length - 1; i > 0; i--) {
             const node = this.intersectNodes[i];
-            console.log(node)
             if (node.systemType === NODE_SYSTEM_TYPE.GRAPHICS) {
                 return node
             }
@@ -47,3 +46,4 @@ export class SpectrographMouseEvent {
         return null
     }
 }
+

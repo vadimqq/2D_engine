@@ -3,6 +3,7 @@ import { Color } from "../core/Color";
 import { NODE_SYSTEM_TYPE, Node } from "../core/Node/Node";
 import { Matrix3 } from "../math/Matrix3";
 import { Vector2 } from "../math/Vector2";
+import { SHADER_TYPE } from "../rendering/const";
 import { ResizeVertexControlManager } from "./ResizeControls/ResizeInstrumentManager";
 import { ControlNodeGeometry } from "./controlNodeGeometry";
 
@@ -11,6 +12,7 @@ interface ControlNodeEvents {
 	'_on_update': [node: ControlNode];
 }
 export class ControlNode extends Node<ControlNodeGeometry> {
+	shaderType: string;
 	position = new Vector2(0, 0);
 	rotation = 0;
 	scale = new Vector2(1, 1);
@@ -29,7 +31,8 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 		super({
 			geometry: new ControlNodeGeometry(),
         	color: new Color({ r: 1, g: 1, b: 1, a: 0.5 }),
-			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE
+			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
+			shaderType: SHADER_TYPE.PRIMITIVE
 		});
 		this.setSize(100, 100)
 		this.geometry.updateGeometry(this.size)
@@ -116,7 +119,6 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			this.needUpdateMatrix = true
 		}
 		this.emit('_on_update', this)
-		// this.resizeVertexControlManager.update()
 	}
 }
 

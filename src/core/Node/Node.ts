@@ -1,4 +1,5 @@
 import EventEmitter from 'eventemitter3';
+import { Camera } from '../../camera/Camera';
 import { Matrix3 } from '../../math/Matrix3';
 import { Vector2 } from '../../math/Vector2';
 import { BufferGeometry } from '../BufferGeometry/BufferGeometry';
@@ -7,6 +8,21 @@ import { NodeEvents } from './model';
 
 type AnyEvent = {
     [K: ({} & string) | ({} & symbol)]: any;
+}
+
+export type InitialOptionsType<G> = {
+	geometry: G;
+	color: Color;
+	transform?: [number, number, number, number, number, number, number, number, number,];
+	systemType: NODE_SYSTEM_TYPE;
+	shaderType: string;
+};
+
+export type CreateNodeOptionsType = {
+	color?: Color;
+	transform?: [number, number, number, number, number, number, number, number, number,];
+	systemType?: NODE_SYSTEM_TYPE;
+	shaderType?: string;
 }
 
 export enum NODE_SYSTEM_TYPE {
@@ -18,6 +34,7 @@ export enum NODE_SYSTEM_TYPE {
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
 	guid: number;
 	systemType: NODE_SYSTEM_TYPE;
+	shaderType: string;
 	localMatrix = new Matrix3();
 	worldMatrix = new Matrix3();
 	needUpdateMatrix = true;
@@ -31,8 +48,9 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 
 	isIntractable = true
 
-	constructor(options: { geometry: G; color: Color; transform?: [number, number, number, number, number, number, number, number, number,]; systemType: NODE_SYSTEM_TYPE;}) {
+	constructor(options: InitialOptionsType<G>) {
 		super();
+		this.shaderType = options.shaderType
 		this.systemType = options.systemType 
 		this.guid = Math.floor(Math.random() * 10000000)
 		this.geometry = options.geometry;
@@ -86,4 +104,5 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 	setSize(x: number, y: number) {
 		this.size.set(x, y)
 	}
+	beforeRender(camera: Camera) {}
 }

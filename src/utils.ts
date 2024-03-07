@@ -150,12 +150,12 @@ export const makeTypedArray = (array, name): Uint16Array => {
     return typedArray;
 }
 
-export const createAttribsFromArrays = (gl: WebGL2RenderingContext, arrays: BufferGeometry) => {
-    const mapping = createMapping(arrays);
+export const createAttribsFromArrays = (gl: WebGL2RenderingContext, geometry: BufferGeometry) => {
+    const mapping = createMapping(geometry);
     const attribs = {};
     Object.keys(mapping).forEach(function(attribName) {
       const bufferName = mapping[attribName];
-      const origArray = arrays[bufferName];
+      const origArray = geometry[bufferName];
       if (origArray.value) {
         attribs[attribName] = {
           value: origArray.value,
@@ -215,11 +215,11 @@ export const createBufferFromTypedArray = (
   return buffer;
 }
 
-export const createBufferInfoFromArrays = (gl: WebGL2RenderingContext, arrays: BufferGeometry, opt_mapping?: any) => {
-    const indices = makeTypedArray(arrays.indices, 'indices');
+export const createBufferInfoFromArrays = (gl: WebGL2RenderingContext, geometry: BufferGeometry, opt_mapping?: any) => {
+    const indices = makeTypedArray(geometry.indices, 'indices');
 
     const bufferInfo = {
-      attribs: createAttribsFromArrays(gl, arrays, opt_mapping),
+      attribs: createAttribsFromArrays(gl, geometry, opt_mapping),
       indices: createBufferFromTypedArray(gl, indices, gl.ELEMENT_ARRAY_BUFFER),
       numElements: indices.length,
     };

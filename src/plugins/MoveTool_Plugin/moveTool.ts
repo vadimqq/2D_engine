@@ -11,17 +11,15 @@ export class MoveTool implements Tool {
     constructor(controlNode: ControlNode) {
         this.controlNode = controlNode;
     }
-
-    onClick (event: SpectrographMouseEvent) {
-        console.log(event)
-    }
     onPointerDown(event: SpectrographMouseEvent) {
         const intersect = event.getLastIntersection()
 
         if (intersect && intersect instanceof Scene) {
             this.controlNode.clearNodeList()
         } else if (intersect instanceof ControlNode) {
-            this.controlNode.startNodeMutation()
+            this.startPosition.copyFrom(event.scenePosition)
+            
+            // this.controlNode.startNodeMutation()
         } else {
             if (event.shiftKey) {
                 this.controlNode.addNode(intersect)
@@ -60,3 +58,4 @@ export class MoveTool implements Tool {
     }
     
 }
+

@@ -28,6 +28,7 @@ export class ToolManager {
     }
 
     _onPointerDown(event: SpectrographMouseEvent) {
+        console.log(this.currentTool)
         this.currentTool?.onPointerDown(event)
     }
 

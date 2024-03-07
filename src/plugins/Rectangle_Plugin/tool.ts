@@ -8,10 +8,12 @@ export class RectangleTool implements Tool {
         this.nodeManager = nodeManager;
     }
 
-    onClick (event: SpectrographMouseEvent) {
+    onPointerDown (event: SpectrographMouseEvent) {
+    
         const RectangleClass = this.nodeManager.getNodeClassByName('RECTANGLE')
         if (RectangleClass) {
-            const newRectangle = new RectangleClass([
+            console.log(event.intersectNodes[0])
+            const newRectangle = this.nodeManager.createNode('RECTANGLE',[
                 1, 0, 0,
                 0, 1, 0,
                 event.scenePosition.x, event.scenePosition.y, 1
@@ -20,5 +22,4 @@ export class RectangleTool implements Tool {
         }
 
     }
-    onPointerDown () {}
 }

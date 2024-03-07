@@ -13,6 +13,7 @@ interface mouseEvents {
     _onPointerDown: [event: SpectrographMouseEvent];
     _onPointerMove: [event: SpectrographMouseEvent];
     _onPointerUp: [event: SpectrographMouseEvent];
+    _onWheel: [event: SpectrographMouseEvent];
 }
 export class MouseEventSystem extends EventEmitter<mouseEvents> implements Extension {
     name = 'MOUSE_EVENT_SYSTEM'
@@ -39,6 +40,8 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
         this._onPointerDown = this._onPointerDown.bind(this);
         this._onPointerMove = this._onPointerMove.bind(this);
         this._onPointerUp = this._onPointerUp.bind(this);
+        this._onWheel = this._onWheel.bind(this);
+
 
         // this._onPointerUp = this._onPointerUp.bind(this);
         // this._onPointerOverOut = this._onPointerOverOut.bind(this);
@@ -71,6 +74,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
                 this.domElement.addEventListener('mousemove', this._onPointerMove, true);
                 this.domElement.addEventListener('mousedown', this._onPointerDown, true);
                 this.domElement.addEventListener('mouseup', this._onPointerUp, true);
+                this.domElement.addEventListener('wheel', this._onWheel, true);
 
             //     this.domElement.addEventListener('mouseout', this._onPointerOverOut, true);
             //     this.domElement.addEventListener('mouseover', this._onPointerOverOut, true);
@@ -85,6 +89,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
             this.domElement.removeEventListener('mousemove', this._onPointerMove, true);
             this.domElement.removeEventListener('mousedown', this._onPointerDown, true);
             this.domElement.removeEventListener('mouseup', this._onPointerUp, true);
+            this.domElement.removeEventListener('wheel', this._onWheel, true);
 
             //     this.domElement.removeEventListener('mouseout', this._onPointerOverOut, true);
             //     this.domElement.removeEventListener('mouseover', this._onPointerOverOut, true);
@@ -112,7 +117,12 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
             this.emit('_onPointerUp', this.mouseEvent)
         }
 
-        testIntersect(nodeList: Node<BufferGeometry>[], event: SpectrographMouseEvent) {
+        private _onWheel(nativeEvent: WheelEvent): void {
+            this.mouseEvent.updateEventInfo(nativeEvent)
+            this.emit('_onWheel', this.mouseEvent) 
+        }
+
+        testIntersect(nodeList: Node[], event: SpectrographMouseEvent) {
             event.intersectNodes = []
             const intersects = findIntersect(nodeList, event.scenePosition )
 
@@ -131,3 +141,4 @@ const findIntersect = (nodeList: Node<BufferGeometry>[], eventPoint: {x: number,
     });
     return intersectedLayers
 }
+  

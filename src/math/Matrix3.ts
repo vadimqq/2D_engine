@@ -101,5 +101,23 @@ export class Matrix3 {
 			)
 			return this
 		}
+
+	public invert() {
+		const a1 = this.elements[0];
+		const b1 =  this.elements[1];
+		const c1 =  this.elements[3];
+		const d1 =  this.elements[4];
+		const tx1 =  this.elements[6];
+		const n = (a1 * d1) - (b1 * c1);
+	
+		this.elements[0] = d1 / n;
+		this.elements[1] = -b1 / n;
+		this.elements[3] = -c1 / n;
+		this.elements[4] = a1 / n;
+		this.elements[6] = ((c1 * this.elements[7]) - (d1 * tx1)) / n;
+		this.elements[7] = -((a1 * this.elements[7]) - (b1 * tx1)) / n;
+	
+		return this;
+	}
 }
 const _m3 = new Matrix3()
