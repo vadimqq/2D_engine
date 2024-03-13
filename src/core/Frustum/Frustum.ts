@@ -25,7 +25,6 @@ export class Frustum {
             const intersects = this.findIntersect(scene.children, list)
             this.nodesInViewport = intersects
             camera.needUpdateFrustum= false
-            console.log('update:', list)
         }
     }
     findIntersect(nodeList: Node<BufferGeometry>[], intersectedLayers: Node<BufferGeometry>[] = []) {

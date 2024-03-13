@@ -30,9 +30,9 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 	constructor() {
 		super({
 			geometry: new ControlNodeGeometry(),
-        	color: new Color({ r: 1, g: 1, b: 1, a: 0.5 }),
+        	color: new Color({ r: 1, g: 1, b: 1, a: 0 }),
 			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
-			shaderType: SHADER_TYPE.PRIMITIVE
+			shaderType: SHADER_TYPE.CONTROL_NODE_SHADER,
 		});
 		this.setSize(100, 100)
 		this.geometry.updateGeometry(this.size)

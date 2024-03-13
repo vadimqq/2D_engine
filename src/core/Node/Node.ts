@@ -28,7 +28,8 @@ export type CreateNodeOptionsType = {
 export enum NODE_SYSTEM_TYPE {
 	SCENE = 'SCENE',
 	CONTROL_NODE = 'CONTROL_NODE',
-	GRAPHICS = 'GRAPHICS'
+	GRAPHICS = 'GRAPHICS',
+	EFFECT = 'EFFECT',
 }
 
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
@@ -46,7 +47,8 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 	geometry: G;
 	color: Color;
 
-	isIntractable = true
+	isIntractable = true;
+	isVisible = true;
 
 	constructor(options: InitialOptionsType<G>) {
 		super();

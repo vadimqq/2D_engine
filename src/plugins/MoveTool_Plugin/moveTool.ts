@@ -34,7 +34,7 @@ export class MoveTool implements Tool {
 
     onPointerMove(event: SpectrographMouseEvent) {
         if (event.isMouseDown) { //TODO нужна машина состояний
-            this.controlNode.setPosition(event.scenePosition.sub(this.startPosition))
+            this.controlNode.setPosition(event.scenePosition.sub(this.startPosition).round())
         }
     }
 

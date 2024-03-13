@@ -1,54 +1,56 @@
-export default /* glsl */`
-//    #ifdef GL_ES
-//    precision mediump float;
-//    #endif
+export default /* glsl */`#version 300 es
+precision mediump float;
+uniform vec2 u_resolution;
+uniform float u_zoom;
+uniform vec2 u_cameraPosition;
 
-//    varying mat3 v_matrixW;
-//    uniform vec2 u_resolution;
+out vec4 outColor;
 
-//    void main(){
-//       float scale = 1.0;
-//       float t = 0.01;
-
-//       vec2 uv = (v_matrixW  * vec3(gl_FragCoord.xy, 1)).xy;
-//       vec2 uv2 = fract(8.0 * uv  + 0.5) - 0.5;
-
-//       float thickness = scale * t;
-
-//       if (abs(uv2.x) < thickness || abs(uv2.y) < thickness) {
-//          gl_FragColor = vec4(0.0, 0.0, 0.0, 1.0);
-//       } else {
-//          discard;
-//       }
-// }
-
-varying vec3 localPosition;
-varying vec4 worldPosition;
-
-uniform vec3 worldCamProjPosition;
-uniform float cellSize;
-uniform vec3 cellColor;
-uniform float cellThickness;
-
-float getGrid(float size, float thickness) {
-   vec2 r = localPosition.xz / size;
+float getGrid() {
+   float lineWidth = 0.5;
+   float scale = u_resolution.y / u_zoom;
+   vec2 r = scale * vec2(gl_FragCoord.x + u_zoom * u_cameraPosition.x, gl_FragCoord.y - u_zoom * u_cameraPosition.y) / u_resolution.yy;
    vec2 grid = abs(fract(r - 0.5) - 0.5) / fwidth(r);
-   float line = min(grid.x, grid.y) + 1.0 - thickness;
-   return 1.0 - min(line, 1.0);
+   float line = min(grid.x, grid.y);
+   return lineWidth - min(line, lineWidth);
+ }
+
+void main(){
+   float grid = getGrid();
+   float alpha = mix(0.15 * grid, grid, 0.1);
+   if (alpha > 0.0) {
+      outColor = vec4(0.0, 0.0, 0.0, 0.2);
+   } else {
+      discard;
+   }
 }
-
-void main() {
-   float grid = getGrid(cellSize, cellThickness);
-
-   float dist = distance(worldCamProjPosition, worldPosition.xyz);
-   vec3 color = mix(cellColor, cellColor, min(1.0, cellThickness * grid));
-
-   gl_FragColor = vec4(color, grid);
-   //тут альфа настраивается
-   gl_FragColor.a = mix(0.15 * gl_FragColor.a, gl_FragColor.a, 0.1);
-   if (gl_FragColor.a <= 0.0) discard;
-
-      // #include <tonemapping_fragment>
-      // #include <encodings_fragment>
-    }
 `
+
+//GOOD!!!!!!!!!!!!!!!!!!!!!
+// precision mediump float;
+// uniform vec2 u_resolution;
+// uniform mat3 u_matrixP;
+// uniform mat3 u_matrixV;
+// uniform float u_zoom;
+// uniform vec2 u_cameraPosition;
+
+// out vec4 outColor;
+
+// float getGrid() {
+//    float lineWidth = 0.5;
+//    float scale = u_resolution.x / u_zoom;
+//    vec2 r = scale * vec2(gl_FragCoord.x + u_zoom * u_cameraPosition.x, -gl_FragCoord.y + u_zoom * u_cameraPosition.y) / u_resolution.xx;
+//    vec2 grid = abs(fract(r - 0.5) - 0.5) / fwidth(r);
+//    float line = min(grid.x, grid.y);
+//    return lineWidth - min(line, lineWidth);
+//  }
+
+// void main(){
+//    float grid = getGrid();
+//    float alpha = mix(0.15 * grid, grid, 0.1);
+//    if (alpha > 0.0) {
+//       outColor = vec4(0.0, 0.0, 0.0, 0.3);
+//    } else {
+//          discard;
+//    }
+// }

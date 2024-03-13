@@ -1,35 +1,48 @@
+import { Camera } from "../../camera/Camera";
+import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
 import { Plugin, PluginInitOptions } from "../../core/PluginManager/Plugin";
-import { RectangleGeometry } from "../Rectangle_Plugin/geometry";
 import fs from "./shaders/fs";
 import vs from "./shaders/vs";
 
 export class PixelGridPlugin implements Plugin {
     name = 'PIXEL_GRID_PLUGIN';
-
+    gridNode: Grid;
     constructor(options: PluginInitOptions) {
         options.renderer.registerProgram('PIXEL_GRID', vs, fs)
-        const grid = new Grid()
-        options.renderer.postEffects.push(grid)
+        this.gridNode = new Grid()
+        options.renderer.postEffects.push(this.gridNode)
+
+        this._onCameraChangeZoom = this._onCameraChangeZoom.bind(this);
+        options.camera.addListener('changeZoom',this._onCameraChangeZoom)
+    }
+
+    _onCameraChangeZoom(camera: Camera) {
+        this.gridNode.isVisible = camera.zoom > 4
     }
 
     init() {}
     destroy() {}
 
+}
 
+export class PixelGridGeometry extends BufferGeometry {
+    constructor() {
+        super()
+        this.position = { numComponents: 2, data: [-1, -1, 1, -1, 1, 1, -1, 1], };
+        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3, ]};
+    }
 }
 
 
-export class Grid extends Node<RectangleGeometry> {
-    constructor(transform?: [number, number, number, number, number, number, number, number, number,]) {
+export class Grid extends Node<PixelGridGeometry> {
+    constructor() {
         super({
-            geometry: new RectangleGeometry(),
-            transform,
+            geometry: new PixelGridGeometry(),
             systemType: NODE_SYSTEM_TYPE.GRAPHICS,
             shaderType: 'PIXEL_GRID'
         })
-       this.size.set(1000, 1000)
-       this.geometry.updateGeometry(this.size)
+        this.isVisible = false;
         
     }
     setSize() {

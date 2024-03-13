@@ -11,8 +11,14 @@ import { SHADER_TYPE } from './const';
 import { WebGLProgram } from './webgl/WebGLProgram';
 import { AttributeSetter } from './webgl/setters/AttributeSetter';
 import { UniformSetter } from './webgl/setters/UniformSetter';
+import control_node_fs from './webgl/shaders/ControlNodeShader/fs';
+import control_node_vs from './webgl/shaders/ControlNodeShader/vs';
+import control_fs from './webgl/shaders/controlPrimitiveShader/fs';
+import control_vs from './webgl/shaders/controlPrimitiveShader/vs';
 import fs from './webgl/shaders/primitiveShader/fs';
 import vs from './webgl/shaders/primitiveShader/vs';
+
+
 
 export class WebGLRenderer{
 	canvasElement: HTMLCanvasElement;
@@ -29,7 +35,7 @@ export class WebGLRenderer{
 	}>()
 	constructor(canvas: HTMLCanvasElement){
 		this.canvasElement = canvas	
-        this.gl = this.canvasElement.getContext("webgl2") as WebGL2RenderingContext;
+        this.gl = this.canvasElement.getContext("webgl2", { antialias: false }) as WebGL2RenderingContext;
 
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		this.projectionMatrix.set(
@@ -39,6 +45,10 @@ export class WebGLRenderer{
 		)
 		this.frustum = new Frustum(this.projectionMatrix)
 		this.registerProgram(SHADER_TYPE.PRIMITIVE, vs, fs)
+		this.registerProgram(SHADER_TYPE.CONTROL_PRIMITIVE_SHADER, control_vs, control_fs)
+		this.registerProgram(SHADER_TYPE.CONTROL_NODE_SHADER, control_node_vs, control_node_fs)
+
+
 	}
 
 	registerProgram(name: string, vertexShader: string, fragmentShader: string) {
@@ -65,32 +75,29 @@ export class WebGLRenderer{
 		
 		this.objectsRender(this.frustum.nodesInViewport, camera)
 		this.controlNodeRender(controlNode, camera)
-		this.postRender()
+		this.postRender(camera)
 	}
-	postRender() {
-		// this.postEffects.forEach((effect) => {
-		// 	if (this.webGLProgramMap.has(effect.shaderType)) {
-		// 		const programInfo = this.webGLProgramMap.get(effect.shaderType)
-		// 		this.gl.useProgram(programInfo.program.program);
-		// 		const uniformsThatAreComputedForEachObject = {
-		// 			worldCamProjPosition: new Vector3(),
-		// 			worldPlanePosition: new Vector3(),
-		// 			cellSize: 1,
-		// 			fadeDistance: 100,
-		// 			fadeStrength: 1,
-		// 			cellThickness: 1,
-		// 			u_matrixP: this.projectionMatrix.toArray(),//TODO слишком часто сетаем матрицу
-		// 			u_matrixV: this.viewMatrix.toArray(),//TODO слишком часто сетаем матрицу
-		// 		}
-		// 		const bufferInfo = createBufferInfoFromArrays(this.gl, effect.geometry);
-		// 		programInfo.attributeSetter.setBuffersAndAttributes(bufferInfo);
-				
-		// 		programInfo.uniformSetter.setUniforms(uniformsThatAreComputedForEachObject)
-		// 		this.gl.drawElements(this.gl.TRIANGLES, bufferInfo.numElements, this.gl.UNSIGNED_SHORT, 0);
-		// 	} else {
-		// 		console.warn(`Отсутствует програма для отрисовки узла ${effect.guid}`)
-		// 	}
-		// })
+	postRender(camera: Camera) {
+		this.postEffects.forEach((effect) => {
+			if (effect.isVisible) {
+				if (this.webGLProgramMap.has(effect.shaderType)) {
+					const programInfo = this.webGLProgramMap.get(effect.shaderType)
+					this.gl.useProgram(programInfo.program.program);
+					const uniformsThatAreComputedForEachObject = {
+						u_resolution: [this.canvasElement.width, this.canvasElement.height],
+						u_zoom: camera.zoom,
+						u_cameraPosition: [camera.position.x, camera.position.y],
+					}
+					const bufferInfo = createBufferInfoFromArrays(this.gl, effect.geometry);
+					programInfo.attributeSetter.setBuffersAndAttributes(bufferInfo);
+					
+					programInfo.uniformSetter.setUniforms(uniformsThatAreComputedForEachObject)
+					this.gl.drawElements(this.gl.TRIANGLES, bufferInfo.numElements, this.gl.UNSIGNED_SHORT, 0);
+				} else {
+					console.warn(`Отсутствует програма для отрисовки узла ${effect.guid}`)
+				}
+			}
+		})
 	}
 	controlNodeRender(controlNode: ControlNode, camera: Camera) {
 		if (!controlNode.isVisible) { return }
@@ -110,6 +117,8 @@ export class WebGLRenderer{
 					u_color: object.color.computedColor,
 					u_matrixP: projectionMatrix,//TODO слишком часто сетаем матрицу
 					u_matrixV: viewMatrix,//TODO слишком часто сетаем матрицу
+					u_zoom: camera.zoom,
+					u_size: [object.size.x, object.size.y],
 				}
 				const bufferInfo = createBufferInfoFromArrays(this.gl, object.geometry);
 				programInfo.attributeSetter.setBuffersAndAttributes(bufferInfo);

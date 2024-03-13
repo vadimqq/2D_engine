@@ -58,4 +58,11 @@ export class Vector2{
 		return this;
 	}
 
+	public round() {
+		this.x = Math.round(this.x)
+		this.y = Math.round(this.y)
+		
+		return this;
+	}
+
 }

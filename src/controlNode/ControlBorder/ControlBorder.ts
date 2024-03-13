@@ -1,44 +1,20 @@
-import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
-import { Color } from "../../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
-import { Vector2 } from "../../math/Vector2";
-import { SHADER_TYPE } from "../../rendering/const";
+import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry"
+import { Color } from "../../core/Color"
+import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node"
+import { SHADER_TYPE } from "../../rendering/const"
 
-export class ControlGeometry extends BufferGeometry {
-    constructor(x = 1, y = 1) {
-        super()
-        this.position = { numComponents: 2, data: [-x, -y, x, -y, x, y, -x, y], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3, ]};
+export class ResizeControl extends Node<BufferGeometry> {
 
-    }
-    updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [-size.x, -size.y, size.x, -size.y, size.x, size.y, -size.x, size.y], };
-    }
-}
-
-export enum RESIZE_CONTROL_TYPE {
-    LEFT_TOP = 'LEFT_TOP',
-    RIGHT_TOP = 'RIGHT_TOP',
-    RIGHT_BOTTOM = 'RIGHT_BOTTOM',
-    LEFT_BOTTOM = 'LEFT_BOTTOM',
-}
-
-const size = 5
-
-export class ResizeControl extends Node<ControlGeometry> {
-    instrumentType: RESIZE_CONTROL_TYPE;
-
-    constructor(type: RESIZE_CONTROL_TYPE) {
+    constructor() {
         super({
-            geometry: new ControlGeometry(size, size),
+            geometry: new BufferGeometry(),
             color: new Color({
-                r: 1,
-                g: 1,
-                b: 1,
+                r: 190 / 255,
+                g: 190 / 255,
+                b: 190 / 255,
                 a: 1,
             }),
-            systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
+            systemType: NODE_SYSTEM_TYPE.EFFECT,
             shaderType: SHADER_TYPE.CONTROL_PRIMITIVE_SHADER
         })
         this.instrumentType = type
