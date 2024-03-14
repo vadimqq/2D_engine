@@ -1,44 +1,27 @@
-
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
-import { Node } from "../../core/Node/Node";
+import { CreateNodeOptionsType, NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { SHADER_TYPE } from "../../rendering/const";
+import { EllipseGeometry } from "./geometry";
+
+export class Ellipse extends Node<EllipseGeometry> {
+    constructor({ transform }: CreateNodeOptionsType) {
+        super({
+            geometry: new EllipseGeometry(),
+            color: new Color({
+                r: 109 / 255,
+                g: 200 / 255,
+                b: 150 / 255,
+                a: 1,
+            }),
+            transform,
+            systemType: NODE_SYSTEM_TYPE.GRAPHICS,
+            shaderType: SHADER_TYPE.PRIMITIVE
+        })
+       this.size.set(50, 50)
+       this.geometry.updateGeometry(this.size)
         
-const radius = 50
-const segment = 100
+    }
+    setSize() {
 
-export class Ellipse extends Node<BufferGeometry> {
-    constructor() {
-        const points = [0, 0]
-        const indices = []
-        const step = Math.PI * 2 / segment
-
-        for (let i = 0; i <= segment; i++) {
-            const cos = Math.cos(step * i)
-            const sin = Math.sin(step * i)
-
-            const pointX = sin  * radius;
-            const pointY = cos  * radius;
-
-           points.push(pointX, pointY)
-
-           indices.push(0, i + 1, i + 2)
-        }
-
-        console.log({points, indices})
-
-        const geometry = new BufferGeometry()
-
-        geometry.position = {
-            numComponents: 2,
-            data: points, 
-        }
-        geometry.indices =  {
-            numComponents: 2,
-            data: indices,
-        };
-        super(
-            geometry,
-            new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
-        )
     }
 }

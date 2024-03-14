@@ -22,8 +22,8 @@ export class Spectrograph {
     ticker: Ticker = new Ticker()
     constructor(){
         const canvas = document.createElement('canvas')
-        canvas.width = 800
-        canvas.height = 600;
+        canvas.width = 1024
+        canvas.height = 768;
         document.getElementById('app')?.appendChild(canvas)
         
         this.camera = new Camera(canvas);
