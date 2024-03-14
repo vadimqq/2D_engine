@@ -10,10 +10,10 @@ export class RectangleTool implements Tool {
 
     onPointerDown (event: SpectrographMouseEvent) {
     
-        const EllipseClass = this.nodeManager.getNodeClassByName('RECTANGLE')
+        const EllipseClass = this.nodeManager.getNodeClassByName('ELLIPSE')
+
         if (EllipseClass) {
-            console.log(event.intersectNodes[0])
-            const newEllipse = this.nodeManager.createNode('RECTANGLE',[
+            const newEllipse = this.nodeManager.createNode('ELLIPSE',[
                 1, 0, 0,
                 0, 1, 0,
                 event.scenePosition.x, event.scenePosition.y, 1

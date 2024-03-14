@@ -9,16 +9,17 @@ export class EllipsePlugin implements Plugin {
     constructor(options: PluginInitOptions) {
         options.toolManager.registerNewTool('ELLIPSE_TOOL', new RectangleTool(options.nodeManager))
         options.nodeManager.registerNewNode('ELLIPSE', Ellipse)
-        const arr = [...Array(10).keys()];
+
+        const arr = [...Array(50).keys()];
 
         arr.forEach(() => {
-            const rect = options.nodeManager.createNode('ELLIPSE',{ transform: [
+            const ellipse = options.nodeManager.createNode('ELLIPSE',{ transform: [
                 1, 0, 0,
                 0, 1, 0,
-                Math.floor(Math.random() * 500), Math.floor(Math.random() * 500), 1
+                Math.floor(Math.random() * 800), Math.floor(Math.random() * 600), 1
             ]})
 
-            options.scene.add_child(rect)
+            options.scene.add_child(ellipse)
         })
     }
 
