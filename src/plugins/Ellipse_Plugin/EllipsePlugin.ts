@@ -10,7 +10,7 @@ export class EllipsePlugin implements Plugin {
         options.toolManager.registerNewTool('ELLIPSE_TOOL', new RectangleTool(options.nodeManager))
         options.nodeManager.registerNewNode('ELLIPSE', Ellipse)
 
-        const arr = [...Array(50).keys()];
+        const arr = [...Array(5).keys()];
 
         arr.forEach(() => {
             const ellipse = options.nodeManager.createNode('ELLIPSE',{ transform: [
