@@ -13,8 +13,6 @@ import { AttributeSetter } from './webgl/setters/AttributeSetter';
 import { UniformSetter } from './webgl/setters/UniformSetter';
 import control_node_fs from './webgl/shaders/ControlNodeShader/fs';
 import control_node_vs from './webgl/shaders/ControlNodeShader/vs';
-import control_fs from './webgl/shaders/controlPrimitiveShader/fs';
-import control_vs from './webgl/shaders/controlPrimitiveShader/vs';
 import fs from './webgl/shaders/primitiveShader/fs';
 import vs from './webgl/shaders/primitiveShader/vs';
 
@@ -45,7 +43,6 @@ export class WebGLRenderer{
 		)
 		this.frustum = new Frustum(this.projectionMatrix)
 		this.registerProgram(SHADER_TYPE.PRIMITIVE, vs, fs)
-		this.registerProgram(SHADER_TYPE.CONTROL_PRIMITIVE_SHADER, control_vs, control_fs)
 		this.registerProgram(SHADER_TYPE.CONTROL_NODE_SHADER, control_node_vs, control_node_fs)
 
 
@@ -71,13 +68,15 @@ export class WebGLRenderer{
 
 		this.viewMatrix.copy(camera.computedMatrix())
 
-		this.frustum.updateRenderList(scene, camera)
+		this.frustum.updateRenderList(scene, controlNode, camera)
 		
 		this.objectsRender(this.frustum.nodesInViewport, camera)
-		this.controlNodeRender(controlNode, camera)
 		this.postRender(camera)
+		this.controlNodeRender(controlNode, camera)
 	}
 	postRender(camera: Camera) {
+		const projectionMatrix = this.projectionMatrix.toArray()
+		const viewMatrix = this.viewMatrix.toArray()
 		this.postEffects.forEach((effect) => {
 			if (effect.isVisible) {
 				if (this.webGLProgramMap.has(effect.shaderType)) {
@@ -87,6 +86,8 @@ export class WebGLRenderer{
 						u_resolution: [this.canvasElement.width, this.canvasElement.height],
 						u_zoom: camera.zoom,
 						u_cameraPosition: [camera.position.x, camera.position.y],
+						u_matrixP: projectionMatrix,//TODO слишком часто сетаем матрицу
+						u_matrixV: viewMatrix,//TODO слишком часто сетаем матрицу
 					}
 					const bufferInfo = createBufferInfoFromArrays(this.gl, effect.geometry);
 					programInfo.attributeSetter.setBuffersAndAttributes(bufferInfo);

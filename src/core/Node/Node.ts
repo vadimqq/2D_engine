@@ -28,6 +28,7 @@ export type CreateNodeOptionsType = {
 export enum NODE_SYSTEM_TYPE {
 	SCENE = 'SCENE',
 	CONTROL_NODE = 'CONTROL_NODE',
+	RESIZE_CONTROL = 'RESIZE_CONTROL',
 	GRAPHICS = 'GRAPHICS',
 	EFFECT = 'EFFECT',
 }
@@ -99,7 +100,6 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 		return new Vector2(this.worldMatrix.elements[2], this.worldMatrix.elements[5])
 	}
 	getChildrenByGuid(guid: number) {
-		// console.log(guid)
 		return this.children.find((node) => node.guid === guid)
 	}
 

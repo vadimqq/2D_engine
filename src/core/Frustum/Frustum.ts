@@ -1,4 +1,5 @@
 import { Camera } from "../../camera/Camera";
+import { ControlNode } from "../../controlNode/controlNode";
 import { Matrix3 } from "../../math/Matrix3";
 import { Vector2 } from "../../math/Vector2";
 import { Scene } from "../../scene/Scene";
@@ -6,7 +7,7 @@ import { BufferGeometry } from "../BufferGeometry/BufferGeometry";
 import { Node } from "../Node/Node";
 
 export class Frustum {
-    nodesInViewport: Node<BufferGeometry>[];
+    nodesInViewport: Node<BufferGeometry>[] = [];
     projectionMatrix: Matrix3
     leftTop = new Vector2();
     rightBottom = new Vector2();
@@ -17,25 +18,28 @@ export class Frustum {
         this.projectionMatrix = projectionMatrix
     }
 
-    updateRenderList(scene: Scene, camera: Camera) {
+    updateRenderList(scene: Scene, controlNode: ControlNode, camera: Camera) {
         if (camera.needUpdateFrustum) {
-            const list = [scene];
+            this.nodesInViewport.splice(0, this.nodesInViewport.length); // очистка массива пересечений
+
+            this.nodesInViewport.push(scene)
             this.leftTop.set(0, 0).applyMatrix3(camera.inverseMatrix)
             this.rightBottom.set(camera.width, camera.height).applyMatrix3(camera.inverseMatrix)
-            const intersects = this.findIntersect(scene.children, list)
-            this.nodesInViewport = intersects
-            camera.needUpdateFrustum= false
+            this.findIntersect(scene.children) // возможно стоит возвращать значение из метода поиска?
+            this.findIntersect([controlNode])
+            camera.needUpdateFrustum = false
         }
     }
-    findIntersect(nodeList: Node<BufferGeometry>[], intersectedLayers: Node<BufferGeometry>[] = []) {
+    findIntersect(nodeList: Node<BufferGeometry>[]) {
         nodeList.forEach((node) => {
-            const isIntersect = this.intersects(node)
-            if (isIntersect) {
-                intersectedLayers.push(node)
-                this.findIntersect(node.children, intersectedLayers)
+            if (node.isVisible) {
+                const isIntersect = this.intersects(node)
+                if (isIntersect) {
+                    this.nodesInViewport.push(node)
+                    this.findIntersect(node.children)
+                }
             }
         });
-        return intersectedLayers
     }
 
     intersects(node: Node<BufferGeometry>) {

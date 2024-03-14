@@ -30,7 +30,7 @@ export class PixelGridGeometry extends BufferGeometry {
     constructor() {
         super()
         this.position = { numComponents: 2, data: [-1, -1, 1, -1, 1, 1, -1, 1], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3, ]};
+        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3]};
     }
 }
 

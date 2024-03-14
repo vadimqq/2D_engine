@@ -19,7 +19,7 @@ export class ResizeVertexControlManager{
 
         this._on_update = this._on_update.bind(this);
 
-        controlNode.addListener('_on_update', this._on_update)
+        controlNode.addListener('update', this._on_update)
     }
 
     init() {

@@ -9,7 +9,8 @@ import { ControlNodeGeometry } from "./controlNodeGeometry";
 
 
 interface ControlNodeEvents {
-	'_on_update': [node: ControlNode];
+	'update': [node: ControlNode];
+	'change_visible': [node: ControlNode];
 }
 export class ControlNode extends Node<ControlNodeGeometry> {
 	shaderType: string;
@@ -63,22 +64,26 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 	addNode(node: Node<BufferGeometry>) {
 		this.nodeMap.set(node.guid, { node, prevMatrix: node.localMatrix.clone() })
 		this._calculateSizeAndPosition()
-		this.isVisible = true
+		this.setIsVisible(true)
 	}
 
 	removeNode(guid: number) {
 		this.nodeMap.delete(guid)
 		this._calculateSizeAndPosition()
-		this.isVisible = true
+		this.setIsVisible(true)
 	}
 
 	hasNode(guid: number) {
 		return this.nodeMap.has(guid)
 	}
+	private setIsVisible(value: boolean) {
+		this.isVisible = value;
+		this.emit('change_visible', this)
+	}
 
 	clearNodeList() {
 		this.nodeMap = new Map()
-		this.isVisible = false
+		this.setIsVisible(false)
 		this.size.set(0, 0)
 	}
 
@@ -118,7 +123,7 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			this.localMatrix.copy(node.localMatrix)
 			this.needUpdateMatrix = true
 		}
-		this.emit('_on_update', this)
+		this.emit('update', this)
 	}
 }
 

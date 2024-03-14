@@ -8,12 +8,10 @@ import { SHADER_TYPE } from "../../rendering/const";
 export class ControlGeometry extends BufferGeometry {
     constructor(x = 1, y = 1) {
         super()
-        this.position = { numComponents: 2, data: [-x, -y, x, -y, x, y, -x, y], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3, ]};
-
+        this.position = { numComponents: 2, data: [0, 0, x, 0, 0, y, x, y], };
     }
     updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [-size.x, -size.y, size.x, -size.y, size.x, size.y, -size.x, size.y], };
+        this.position = { numComponents: 2, data: [0, 0, size.x, 0, 0, size.y, size.x, size.y], };
     }
 }
 
@@ -24,7 +22,7 @@ export enum RESIZE_CONTROL_TYPE {
     LEFT_BOTTOM = 'LEFT_BOTTOM',
 }
 
-const size = 5
+const size = 10;
 
 export class ResizeControl extends Node<ControlGeometry> {
     instrumentType: RESIZE_CONTROL_TYPE;
@@ -38,8 +36,8 @@ export class ResizeControl extends Node<ControlGeometry> {
                 b: 1,
                 a: 1,
             }),
-            systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
-            shaderType: SHADER_TYPE.CONTROL_PRIMITIVE_SHADER
+            systemType: NODE_SYSTEM_TYPE.RESIZE_CONTROL,
+            shaderType: SHADER_TYPE.CONTROL_NODE_SHADER
         })
         this.instrumentType = type
         this.size.set(size, size)
@@ -55,19 +53,20 @@ export class ResizeControl extends Node<ControlGeometry> {
 
     updatePosition() {
         this.localMatrix.identity()
+        const halfSize = this.size.x / 2;
         switch (this.instrumentType) {
             case RESIZE_CONTROL_TYPE.LEFT_TOP:
-                this.localMatrix.translate(0, 0)
+                this.localMatrix.translate(-halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_TOP:
                 this.parent.size.x
-                this.localMatrix.translate(this.parent.size.x, 0)
+                this.localMatrix.translate(this.parent.size.x - halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
-                this.localMatrix.translate(this.parent.size.x, this.parent.size.y)
+                this.localMatrix.translate(this.parent.size.x -halfSize, this.parent.size.y - halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-                this.localMatrix.translate(0, this.parent.size.y)
+                this.localMatrix.translate(-halfSize, this.parent.size.y - halfSize)
                 break;
             default:
                 break;
@@ -88,7 +87,10 @@ export class ResizeControl extends Node<ControlGeometry> {
 		return this.worldMatrix
 	}
     beforeRender(camera: Camera): void {
-        const vec = this.size.clone().set(this.size.x / camera.zoom, this.size.y / camera.zoom)
-        this.geometry.updateGeometry(vec)
+        this.size.set(size / camera.zoom, size / camera.zoom)
+
+        this.geometry.updateGeometry(this.size)
+        this.updatePosition()
+        this.needUpdateMatrix = true; //TODO подумать как обновлять матрицу реже
     }
 }

@@ -31,6 +31,10 @@ export class Spectrograph {
 
         this.renderer = new WebGLRenderer(canvas)
 
+        this.updateFrustum = this.updateFrustum.bind(this);
+        this.controlNode.addListener('change_visible', this.updateFrustum)//TODO нужно подумать как вынести все это дело, в рутовом классе подписка на разные инстансы это плохо
+       
+
         this.nodeManager = new NodeManager(this.renderer);
 
         //Регистрация системных зависимостей
@@ -68,5 +72,9 @@ export class Spectrograph {
     }
     render(){
         this.renderer.render(this.scene, this.camera, this.controlNode)
+    }
+
+    updateFrustum() {
+        this.camera.needUpdateFrustum = true;
     }
 }
