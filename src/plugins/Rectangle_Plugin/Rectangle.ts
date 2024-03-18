@@ -4,7 +4,7 @@ import { SHADER_TYPE } from "../../rendering/const";
 import { RectangleGeometry } from "./geometry";
 
 export class Rectangle extends Node<RectangleGeometry> {
-    rectangleTopLeftCornerRadius: number = 0;
+    rectangleTopLeftCornerRadius: number = 5;
     rectangleTopRightCornerRadius: number = 0;
     rectangleBottomLeftCornerRadius: number = 0;
     rectangleBottomRightCornerRadius: number = 0;

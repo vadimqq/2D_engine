@@ -18,7 +18,7 @@ export class Vector2{
         return new Vector2(this.x, this.y);
     }
 
-	public copyFrom(vec: Vector2): this {
+	public copy(vec: Vector2): this {
         this.set(vec.x, vec.y);
 
         return this;

@@ -6,6 +6,7 @@ import { Vector2 } from "../math/Vector2";
 import { SHADER_TYPE } from "../rendering/const";
 import { RESIZE_CONTROL_TYPE } from "./ResizeControls/ResizeControl";
 import { ResizeVertexControlManager } from "./ResizeControls/ResizeInstrumentManager";
+import { RotateVertexControlManager } from "./RotateControls/RotateInstrumentManager";
 import { ControlNodeGeometry } from "./controlNodeGeometry";
 
 
@@ -16,10 +17,12 @@ interface ControlNodeEvents {
 export class ControlNode extends Node<ControlNodeGeometry> {
 	shaderType: string;
 	isVisible = false;
-	transformMatrix = new Matrix3()
-	inverseWorldMatrix = new Matrix3()
+	inverseWorldMatrix = new Matrix3();
+	centerVector = new Vector2();
 	private calculateSizeService = new CalculateSizeService();
-	private resizeVertexControlManager: ResizeVertexControlManager
+	private resizeVertexControlManager: ResizeVertexControlManager;
+	private rotateVertexControlManager: RotateVertexControlManager;
+
 
 	nodeMap = new Map<number,{
 		node: Node<BufferGeometry>;
@@ -34,14 +37,34 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
 			shaderType: SHADER_TYPE.CONTROL_NODE_SHADER,
 		});
-		this.setSize(100, 100)
-		this.geometry.updateGeometry(this.size)
-		this.resizeVertexControlManager = new ResizeVertexControlManager(this)
+		this.rotateVertexControlManager = new RotateVertexControlManager(this);
+		this.rotateVertexControlManager.init()
+
+		this.resizeVertexControlManager = new ResizeVertexControlManager(this);
 		this.resizeVertexControlManager.init()
 	}
 
-	setRotation(angle: number) {
-		this.needUpdateMatrix = true
+	setRotation(angle: number, offset: Vector2) {
+		if (this.nodeMap.size > 1) {
+			this.nodeMap.forEach(({node, prevMatrix}) => {
+				node.localMatrix
+				.identity()
+				.translate(offset.x, offset.y)
+				.rotate(angle)
+				.translate(-offset.x, -offset.y)
+				.multiply(prevMatrix);
+				node.needUpdateMatrix = true;
+			});
+		} else {
+			const {node, prevMatrix} = this.nodeMap.values().next().value;
+			node.localMatrix.copy(prevMatrix)
+			.translate(node.size.x / 2, node.size.y / 2)
+			.rotate(angle)
+			.translate(-node.size.x / 2, -node.size.y / 2);
+
+			node.needUpdateMatrix = true;
+		}
+		this._calculateSizeAndPosition()
 	}
 
 	setPosition(vector: Vector2) {
@@ -78,15 +101,26 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 		}
 
 		if (this.nodeMap.size > 1) {
-			// this.nodeMap.forEach(({node, prevSize, prevMatrix}) => {
-			// 	const test = new Vector2(prevSize.x + vector.x / prevSize.x, prevSize.y + vector.y / prevSize.y);
-			// 	node.localMatrix.copy(prevMatrix).scale(test.x , test.y);
-			// 	this.setPosition(positionAdj)
-			// });
+			this.nodeMap.forEach(({node, prevSize, prevMatrix}) => {
+				const newSizeX = prevSize.x + vector.x
+				const newSizeY = prevSize.y + vector.y
+
+				const xMulti = newSizeX > 0 ? 1: -1;
+				const yMulti = newSizeY > 0 ? 1: -1;
+				node.localMatrix.copy(prevMatrix).scale(xMulti, yMulti).translate(positionAdj.x * xMulti, positionAdj.y * yMulti);
+				node.setSize(Math.abs(newSizeX), Math.abs(newSizeY))
+				node.needUpdateMatrix = true
+			});
 		} else {
-			const {node, prevSize} = this.nodeMap.values().next().value;
-			node.setSize(prevSize.x + vector.x, prevSize.y + vector.y)
-			this.setPosition(positionAdj)
+			const { node, prevSize, prevMatrix } = this.nodeMap.values().next().value;
+			const newSizeX = prevSize.x + vector.x
+			const newSizeY = prevSize.y + vector.y
+
+			const xMulti = newSizeX > 0 ? 1: -1;
+			const yMulti = newSizeY > 0 ? 1: -1;
+			node.localMatrix.copy(prevMatrix).scale(xMulti, yMulti).translate(positionAdj.x * xMulti, positionAdj.y * yMulti);
+			node.setSize(Math.abs(newSizeX), Math.abs(newSizeY))
+			node.needUpdateMatrix = true
 		}
 		this._calculateSizeAndPosition()
 	}
@@ -97,19 +131,23 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			prevMatrix: node.localMatrix.clone(),
 			prevSize: node.size.clone()
 		});
+		
 		this._calculateSizeAndPosition();
 		this.setIsVisible(true);
+		this.updateInverseWorldMatrix();
 	}
 
 	removeNode(guid: number) {
 		this.nodeMap.delete(guid)
 		this._calculateSizeAndPosition()
 		this.setIsVisible(true)
+		this.updateInverseWorldMatrix();
 	}
 
 	hasNode(guid: number) {
 		return this.nodeMap.has(guid)
 	}
+
 	private setIsVisible(value: boolean) {
 		this.isVisible = value;
 		this.emit('change_visible', this)
@@ -127,13 +165,19 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 
 	endNodeMutation() {
 		this._updateNodePreviousMatrix()
+		this.updateInverseWorldMatrix()
+	}
+
+	updateInverseWorldMatrix() {
+		this.inverseWorldMatrix.copy(this.computeWorldMatrix()).setPosition(0, 0).invert()
 	}
 
 	private _updateNodePreviousMatrix() {
 		this.nodeMap.forEach((value, guid) => {
 			const { node, prevMatrix, prevSize } = this.nodeMap.get(guid)
 			prevMatrix.copy(node.localMatrix)
-			prevSize.copyFrom(node.size)
+			prevSize.copy(node.size)
+			console.log(node)
 		})
 	}
 
@@ -157,6 +201,12 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			this.localMatrix.copy(node.localMatrix)
 			this.needUpdateMatrix = true
 		}
+
+		this.centerVector
+		.copy(this.size)
+		.divideScalar(2)
+		.applyMatrix3(this.localMatrix);
+
 		this.emit('update', this)
 	}
 
@@ -164,7 +214,6 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 	computeWorldMatrix() {
 		if (this.needUpdateMatrix) {
 			this.worldMatrix.copy(this.localMatrix)
-			this.inverseWorldMatrix.copy(this.worldMatrix).setPosition(0, 0).invert()
 			this.needUpdateMatrix = false
 			this.children.forEach((child) => {child.needUpdateMatrix = true})
 		}

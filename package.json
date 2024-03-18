@@ -15,6 +15,6 @@
   "dependencies": {
     "@types/earcut": "^2.1.4",
     "earcut": "^2.2.4",
-    "eventemitter3": "^5.0.1",
+    "eventemitter3": "^5.0.1"
   }
 }

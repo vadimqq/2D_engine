@@ -11,8 +11,8 @@ export class Frustum {
     projectionMatrix: Matrix3
     leftTop = new Vector2();
     rightBottom = new Vector2();
-    iterableLeftTop = new Vector2();
-    iterableRightBottom = new Vector2();
+
+    calculateMinMaxService = new CalculateMinMaxService;
 
     constructor(projectionMatrix: Matrix3) {
         this.projectionMatrix = projectionMatrix
@@ -43,10 +43,53 @@ export class Frustum {
     }
 
     intersects(node: Node<BufferGeometry>) {
-        this.iterableLeftTop.set(0, 0).applyMatrix3(node.worldMatrix)
-        this.iterableRightBottom.set(node.size.x, node.size.y).applyMatrix3(node.worldMatrix)
+        const { maxX, maxY, minX, minY } = this.calculateMinMaxService.calculateSizeMultiLayer(node);
 
-        return !(this.leftTop.y > this.iterableRightBottom.y || this.rightBottom.y < this.iterableLeftTop.y || this.rightBottom.x < this.iterableLeftTop.x || this.leftTop.x > this.iterableRightBottom.x)
+        return !(this.leftTop.y > maxY || this.rightBottom.y < minY || this.rightBottom.x < minX || this.leftTop.x > maxX)
     }
+}
+
+class CalculateMinMaxService {
+	leftTop = new Vector2();
+	rightTop = new Vector2();
+	rightBottom = new Vector2();
+	leftBottom = new Vector2();
+
+    min = new Vector2();
+    max = new Vector2();
+
+	calculateSizeMultiLayer(node: Node<BufferGeometry>) {
+		this.leftTop
+		    .set(0, 0)
+			.applyMatrix3(node.worldMatrix);
+		this.rightTop
+			.set(node.size.x, 0)
+			.applyMatrix3(node.worldMatrix);
+		this.rightBottom
+			.set(node.size.x, node.size.y)
+			.applyMatrix3(node.worldMatrix);
+		this.leftBottom
+			.set(0, node.size.y)
+			.applyMatrix3(node.worldMatrix);
+	
+		const min = this.min
+			.copy(this.leftTop)
+			.min(this.rightTop)
+			.min(this.rightBottom)
+			.min(this.leftBottom);
+	
+		const max = this.max
+			.copy(this.leftTop)
+			.max(this.rightTop)
+			.max(this.rightBottom)
+			.max(this.leftBottom);
+	
+		return {
+            maxX: max.x,
+            maxY: max.y,
+            minX: min.x,
+            minY: min.y,
+        };
+	  }
 }
 

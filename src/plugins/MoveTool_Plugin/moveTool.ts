@@ -7,6 +7,7 @@ import { controlNodeActions } from "./actions/controlNodeActions";
 import { defaultActions } from "./actions/defaultActions";
 import { graphicsActions } from "./actions/graphicsActions";
 import { resizeControlActions } from "./actions/resizeControlActions";
+import { rotateControlActions } from "./actions/rotateControlActions";
 import { sceneActions } from "./actions/sceneActions";
 
 export class MoveTool implements Tool {
@@ -17,6 +18,7 @@ export class MoveTool implements Tool {
     actionMapper = {
         [NODE_SYSTEM_TYPE.CONTROL_NODE]: controlNodeActions,
         [NODE_SYSTEM_TYPE.RESIZE_CONTROL]: resizeControlActions,
+        [NODE_SYSTEM_TYPE.ROTATE_CONTROL]: rotateControlActions,
         [NODE_SYSTEM_TYPE.GRAPHICS]: graphicsActions,
         [NODE_SYSTEM_TYPE.SCENE]: sceneActions,
         [NODE_SYSTEM_TYPE.EFFECT]: defaultActions,
@@ -31,7 +33,7 @@ export class MoveTool implements Tool {
     }
     onPointerDown(event: SpectrographMouseEvent) {
         this.setCurrentIntersectionNode(event.getLastIntersection());
-        this.startPosition.copyFrom(event.scenePosition)
+        this.startPosition.copy(event.scenePosition)
 
         const instrumentOptions = {
             event,

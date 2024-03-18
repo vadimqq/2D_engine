@@ -5,9 +5,57 @@ import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Node } from "../../core/Node/Node";
 import { StreamManager } from "../../core/StreamManager/StreamManager";
 import { Extension, ExtensionInitOptions } from "../../core/SystemExtensionManager/Extension";
+import { Vector2 } from "../../math/Vector2";
 import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { SpectrographMouseEvent } from "./SpectrographMouseEvent";
+
+//TODO Похожий класс есть в контрол ноде, вычисления слишком сложные нужно думать как искать пересечения проще!
+class CalculateSizeService {
+	leftTop = new Vector2();
+	rightTop = new Vector2();
+	rightBottom = new Vector2();
+	leftBottom = new Vector2();
+
+    min = new Vector2();
+    max = new Vector2();
+
+	calculateSizeMultiLayer(node: Node<BufferGeometry>) {
+		this.leftTop
+		    .set(0, 0)
+			.applyMatrix3(node.worldMatrix);
+		this.rightTop
+			.set(node.size.x, 0)
+			.applyMatrix3(node.worldMatrix);
+		this.rightBottom
+			.set(node.size.x, node.size.y)
+			.applyMatrix3(node.worldMatrix);
+		this.leftBottom
+			.set(0, node.size.y)
+			.applyMatrix3(node.worldMatrix);
+	
+		const min = this.min
+			.copy(this.leftTop)
+			.min(this.rightTop)
+			.min(this.rightBottom)
+			.min(this.leftBottom);
+	
+		const max = this.max
+			.copy(this.leftTop)
+			.max(this.rightTop)
+			.max(this.rightBottom)
+			.max(this.leftBottom);
+	
+		return {
+            maxX: max.x,
+            maxY: max.y,
+            minX: min.x,
+            minY: min.y,
+        };
+	  }
+}
+
+const calculateSizeService = new CalculateSizeService();
 
 interface mouseEvents {
     _onPointerDown: [event: SpectrographMouseEvent];
@@ -97,14 +145,16 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
         testIntersect(nodeList: Node[], event: SpectrographMouseEvent) {
             event.intersectNodes = []
             const intersects = findIntersect(nodeList, event.scenePosition)
-             event.intersectNodes = intersects
+            event.intersectNodes = intersects
         }
 }
 
 
 const findIntersect = (nodeList: Node<BufferGeometry>[], eventPoint: {x: number, y: number}, intersectedLayers: Node<BufferGeometry>[] = []) => {
     nodeList.forEach((node) => {
-        const isIntersect = (eventPoint.x > node.worldMatrix.elements[6] && eventPoint.x < node.size.x + node.worldMatrix.elements[6]) && (eventPoint.y > node.worldMatrix.elements[7] && eventPoint.y < node.size.y + node.worldMatrix.elements[7])
+        const { maxX, minX, minY, maxY } = calculateSizeService.calculateSizeMultiLayer(node)
+        
+        const isIntersect = (eventPoint.x > minX && eventPoint.x < maxX) && (eventPoint.y > minY && eventPoint.y < maxY)
         if (isIntersect) {
             intersectedLayers.push(node)
         }
