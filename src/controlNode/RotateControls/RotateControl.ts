@@ -33,10 +33,10 @@ export class RotateControl extends Node<ControlGeometry> {
         super({
             geometry: new ControlGeometry(sizeX, sizeY),
             color: new Color({
-                r: 1,
-                g: 1,
-                b: 1,
-                a: 1,
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 0,
             }),
             systemType: NODE_SYSTEM_TYPE.ROTATE_CONTROL,
             shaderType: SHADER_TYPE.PRIMITIVE,
