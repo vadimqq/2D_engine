@@ -33,7 +33,7 @@ export class WebGLRenderer{
 	}>()
 	constructor(canvas: HTMLCanvasElement){
 		this.canvasElement = canvas	
-        this.gl = this.canvasElement.getContext("webgl2", { antialias: false }) as WebGL2RenderingContext;
+        this.gl = this.canvasElement.getContext("webgl2", { antialias: true }) as WebGL2RenderingContext;
 
         this.gl.clearColor(0.0, 0.0, 0.0, 1.0);
 		this.projectionMatrix.set(

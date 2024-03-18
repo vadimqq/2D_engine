@@ -6,6 +6,7 @@ import { Vector2 } from "../../math/Vector2";
 import { controlNodeActions } from "./actions/controlNodeActions";
 import { defaultActions } from "./actions/defaultActions";
 import { graphicsActions } from "./actions/graphicsActions";
+import { resizeControlActions } from "./actions/resizeControlActions";
 import { sceneActions } from "./actions/sceneActions";
 
 export class MoveTool implements Tool {
@@ -15,11 +16,10 @@ export class MoveTool implements Tool {
 
     actionMapper = {
         [NODE_SYSTEM_TYPE.CONTROL_NODE]: controlNodeActions,
-        [NODE_SYSTEM_TYPE.RESIZE_CONTROL]: defaultActions,
+        [NODE_SYSTEM_TYPE.RESIZE_CONTROL]: resizeControlActions,
         [NODE_SYSTEM_TYPE.GRAPHICS]: graphicsActions,
         [NODE_SYSTEM_TYPE.SCENE]: sceneActions,
         [NODE_SYSTEM_TYPE.EFFECT]: defaultActions,
-
     };
     
     constructor(controlNode: ControlNode) {
@@ -74,7 +74,6 @@ export class MoveTool implements Tool {
         if (event.scenePosition.equals(this.startPosition)) {
         // ON POINTER UP
             this.actionMapper[this.currentIntersectionNode.systemType]?.onPointerUp(instrumentOptions)  
-
         } else {
         //on DRAG END
             this.actionMapper[this.currentIntersectionNode.systemType]?.onDragEnd(instrumentOptions)  

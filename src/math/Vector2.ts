@@ -65,4 +65,28 @@ export class Vector2{
 		return this;
 	}
 
+	public divide(vec: Vector2) {
+		this.x /= vec.x;
+		this.y /= vec.y;
+
+		return this;
+	}
+	public divideScalar(scalar: number) {
+		return this.multiplyScalar(1 / scalar);
+	}
+
+	public multiply(vec: Vector2) {
+		this.x *= vec.x;
+		this.y *= vec.y;
+
+		return this;
+	}
+
+	public multiplyScalar(scalar: number) {
+		this.x *= scalar;
+		this.y *= scalar;
+		
+		return this;
+	}
+
 }

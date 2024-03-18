@@ -26,7 +26,7 @@ const size = 10;
 
 export class ResizeControl extends Node<ControlGeometry> {
     instrumentType: RESIZE_CONTROL_TYPE;
-
+    sizeMultiplier: Vector2;
     constructor(type: RESIZE_CONTROL_TYPE) {
         super({
             geometry: new ControlGeometry(size, size),
@@ -41,6 +41,25 @@ export class ResizeControl extends Node<ControlGeometry> {
         })
         this.instrumentType = type
         this.size.set(size, size)
+
+        switch (this.instrumentType) {
+            case RESIZE_CONTROL_TYPE.LEFT_TOP:
+                this.sizeMultiplier = new Vector2(-1, -1)
+                break;
+            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
+                this.sizeMultiplier = new Vector2(1, -1)
+
+                break;
+            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
+                this.sizeMultiplier = new Vector2(1, 1)
+
+                break;
+            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
+                this.sizeMultiplier = new Vector2(-1, 1)
+                break;
+            default:
+                break;
+        }
     }
 
     init() {

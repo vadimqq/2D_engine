@@ -1,4 +1,3 @@
-import { Vector2 } from "./Vector2";
 
 export class Matrix3 {
 	elements = [
@@ -19,6 +18,14 @@ export class Matrix3 {
 				x, y, 1,
 			)
 		  return this.multiply(_m3)
+		}
+		setPosition(x: number, y: number) {
+			this.set(
+				this.elements[0], this.elements[1], this.elements[2],
+				this.elements[3], this.elements[4], this.elements[5],
+				x, y, this.elements[8],
+			)
+			return this;
 		}
 		rotate (angleInRadians: number) {
 		  var c = Math.cos(angleInRadians);
@@ -85,21 +92,13 @@ export class Matrix3 {
 				m.elements[3], m.elements[4], m.elements[5],
 				m.elements[6], m.elements[7], m.elements[8],
 			)
-			return this
+			return this;
 		}
 		clone(): Matrix3 {
 			return new Matrix3().copy(this);
 		}
 		toArray() {
-			return this.elements
-		}
-		setPosition(vec: Vector2) {
-			this.set(
-				1, 0, 0,
-				0, 1, 0,
-				vec.x, vec.y, 1,
-			)
-			return this
+			return this.elements;
 		}
 
 	public invert() {
