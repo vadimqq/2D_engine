@@ -23,9 +23,6 @@ export class Ellipse extends Node<BufferGeometry> {
 
            indices.push(0, i + 1, i + 2)
         }
-
-        console.log({points, indices})
-
         const geometry = new BufferGeometry()
 
         geometry.position = {

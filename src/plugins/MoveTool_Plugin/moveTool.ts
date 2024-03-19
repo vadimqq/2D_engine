@@ -1,61 +1,86 @@
 import { ControlNode } from "../../controlNode/controlNode";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Tool } from "../../core/ToolManager/Tool";
 import { SpectrographMouseEvent } from "../../events/MouseEvents/SpectrographMouseEvent";
 import { Vector2 } from "../../math/Vector2";
-import { Scene } from "../../scene/Scene";
+import { controlNodeActions } from "./actions/controlNodeActions";
+import { defaultActions } from "./actions/defaultActions";
+import { graphicsActions } from "./actions/graphicsActions";
+import { resizeControlActions } from "./actions/resizeControlActions";
+import { rotateControlActions } from "./actions/rotateControlActions";
+import { sceneActions } from "./actions/sceneActions";
 
 export class MoveTool implements Tool {
     controlNode: ControlNode;
     startPosition = new Vector2();
+    currentIntersectionNode: Node;
 
+    actionMapper = {
+        [NODE_SYSTEM_TYPE.CONTROL_NODE]: controlNodeActions,
+        [NODE_SYSTEM_TYPE.RESIZE_CONTROL]: resizeControlActions,
+        [NODE_SYSTEM_TYPE.ROTATE_CONTROL]: rotateControlActions,
+        [NODE_SYSTEM_TYPE.GRAPHICS]: graphicsActions,
+        [NODE_SYSTEM_TYPE.SCENE]: sceneActions,
+        [NODE_SYSTEM_TYPE.EFFECT]: defaultActions,
+    };
+    
     constructor(controlNode: ControlNode) {
         this.controlNode = controlNode;
+        this.setCurrentIntersectionNode = this.setCurrentIntersectionNode.bind(this)
+    }
+    setCurrentIntersectionNode(node: Node) {
+        this.currentIntersectionNode = node;
     }
     onPointerDown(event: SpectrographMouseEvent) {
-        const intersect = event.getLastIntersection()
+        this.setCurrentIntersectionNode(event.getLastIntersection());
+        this.startPosition.copy(event.scenePosition)
 
-        if (intersect && intersect instanceof Scene) {
-            this.controlNode.clearNodeList()
-        } else if (intersect instanceof ControlNode) {
-            this.startPosition.copyFrom(event.scenePosition)
-            
-            // this.controlNode.startNodeMutation()
-        } else {
-            if (event.shiftKey) {
-                this.controlNode.addNode(intersect)
-            } else {
-                this.controlNode.clearNodeList()
-                this.controlNode.addNode(intersect)
-            }
+        const instrumentOptions = {
+            event,
+            intersect: this.currentIntersectionNode,
+            startMousePosition: this.startPosition,
+            controlNode: this.controlNode,
+            setCurrentIntersectionNode: this.setCurrentIntersectionNode
         }
-        this.startPosition.copyFrom(event.scenePosition)
-       
+        this.actionMapper[this.currentIntersectionNode.systemType]?.onPointerDown(instrumentOptions)
     }
 
     onPointerMove(event: SpectrographMouseEvent) {
-        if (event.isMouseDown) { //TODO нужна машина состояний
-            this.controlNode.setPosition(event.scenePosition.sub(this.startPosition))
+        const instrumentOptions = {
+            event,
+            intersect: this.currentIntersectionNode,
+            startMousePosition: this.startPosition,
+            controlNode: this.controlNode,
+            setCurrentIntersectionNode: this.setCurrentIntersectionNode
         }
+        if (event.isMouseDown) { //TODO нужна машина состояний
+        // DRAG
+            this.actionMapper[this.currentIntersectionNode.systemType]?.onDrag(instrumentOptions)
+        } else {
+        // MOVE
+            this.setCurrentIntersectionNode(event.getLastIntersection());
+            this.actionMapper[this.currentIntersectionNode.systemType]?.onPointerMove(instrumentOptions)
+        }
+            
     }
 
     onPointerUp(event: SpectrographMouseEvent) {
-        const intersect = event.getLastIntersection()
-        const graphicsNode = event.getFirstGraphicsNode()
-        if (event.scenePosition.equals(this.startPosition) && intersect instanceof ControlNode && graphicsNode) {
-            if (event.shiftKey) {
-                if (this.controlNode.hasNode(graphicsNode.guid)) {
-                    this.controlNode.removeNode(graphicsNode.guid)
-                } else {
-                    this.controlNode.addNode(graphicsNode)
-                }
-            } else {
-                this.controlNode.clearNodeList()
-                this.controlNode.addNode(graphicsNode)
-            }
+        const instrumentOptions = {
+            event,
+            intersect: this.currentIntersectionNode,
+            startMousePosition: this.startPosition,
+            controlNode: this.controlNode,
+            setCurrentIntersectionNode: this.setCurrentIntersectionNode
         }
-       
-        this.controlNode.endNodeMutation()//TODO нужно делать проверку была ли трансформация
+
+        if (event.scenePosition.equals(this.startPosition)) {
+        // ON POINTER UP
+            this.actionMapper[this.currentIntersectionNode.systemType]?.onPointerUp(instrumentOptions)  
+        } else {
+        //on DRAG END
+            this.actionMapper[this.currentIntersectionNode.systemType]?.onDragEnd(instrumentOptions)  
+        }
     }
-    
 }
 

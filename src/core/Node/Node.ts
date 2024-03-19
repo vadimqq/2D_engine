@@ -4,32 +4,7 @@ import { Matrix3 } from '../../math/Matrix3';
 import { Vector2 } from '../../math/Vector2';
 import { BufferGeometry } from '../BufferGeometry/BufferGeometry';
 import { Color } from '../Color';
-import { NodeEvents } from './model';
-
-type AnyEvent = {
-    [K: ({} & string) | ({} & symbol)]: any;
-}
-
-export type InitialOptionsType<G> = {
-	geometry: G;
-	color: Color;
-	transform?: [number, number, number, number, number, number, number, number, number,];
-	systemType: NODE_SYSTEM_TYPE;
-	shaderType: string;
-};
-
-export type CreateNodeOptionsType = {
-	color?: Color;
-	transform?: [number, number, number, number, number, number, number, number, number,];
-	systemType?: NODE_SYSTEM_TYPE;
-	shaderType?: string;
-}
-
-export enum NODE_SYSTEM_TYPE {
-	SCENE = 'SCENE',
-	CONTROL_NODE = 'CONTROL_NODE',
-	GRAPHICS = 'GRAPHICS'
-}
+import { AnyEvent, InitialOptionsType, NODE_SYSTEM_TYPE, NodeEvents } from './model';
 
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
 	guid: number;
@@ -46,7 +21,8 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 	geometry: G;
 	color: Color;
 
-	isIntractable = true
+	isIntractable = true;
+	isVisible = true;
 
 	constructor(options: InitialOptionsType<G>) {
 		super();
@@ -97,7 +73,6 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 		return new Vector2(this.worldMatrix.elements[2], this.worldMatrix.elements[5])
 	}
 	getChildrenByGuid(guid: number) {
-		// console.log(guid)
 		return this.children.find((node) => node.guid === guid)
 	}
 

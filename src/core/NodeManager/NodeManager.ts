@@ -1,7 +1,8 @@
 import { WebGLRenderer } from "../../rendering/WebGLRenderer"
 import { ClassType } from "../../utils/models"
 import { BufferGeometry } from "../BufferGeometry/BufferGeometry"
-import { CreateNodeOptionsType, Node } from "../Node/Node"
+import { Node } from "../Node/Node"
+import { CreateNodeOptionsType } from "../Node/model"
 
 export class NodeManager {
     renderer: WebGLRenderer
