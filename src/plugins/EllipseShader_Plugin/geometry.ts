@@ -25,15 +25,24 @@ export class EllipseGeometry extends BufferGeometry {
             points.push(pointX, pointY);
             points.push(innerPointX, innerPointY);
 
-            const start = i * 2;
+            // const start = i * 2;
             // indices.push(start, start + 1, start + 2);
             // indices.push(start + 1, start + 2, start + 3);
 
-            if(i !== segments) {
-                indices.push(start, start + 1, start + 2);
-                indices.push(start + 1, start + 2, start + 3);
-            }
+            // if(i !== segments) {
+            //     indices.push(start, start + 1, start + 2);
+            //     indices.push(start + 1, start + 2, start + 3);
+            // }
         }
+        for (let i = 0; i < segments; i++) {
+            const start = i * 2;
+            indices.push(start, start + 1, start + 2);
+            indices.push(start + 1, start + 2, start + 3);
+        }
+        // indices.pop();
+        // indices.pop();
+        // indices.pop();
+        // indices.pop();
         console.log();
         this.position = {
             numComponents: 2,
