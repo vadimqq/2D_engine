@@ -22,11 +22,11 @@ export class Ellipse extends Node<EllipseGeometry> {
             systemType: NODE_SYSTEM_TYPE.GRAPHICS,
             shaderType: SHADER_TYPE.PRIMITIVE
         })
-       this.size.set(50, 20)
+       this.size.set(100, 100)
 
-        this.radius = 25; //this.radius = radius;
-        this.innerRadius = 10; //        this.innerRadius = innerRadius;
-        this.segments = 20; //        this.segments = segments;
+        this.radius = 50; //this.radius = radius;
+        this.innerRadius = 30; //        this.innerRadius = innerRadius;
+        this.segments = 60; //        this.segments = segments;
         this.round = 100; //        this.round = round;
         this.start_rad = 0; //        this.start_rad = start_rad;
 
@@ -42,10 +42,6 @@ export class Ellipse extends Node<EllipseGeometry> {
 
         
     }
-
-    // _init(){
-    //
-    //     }
     setSize() {
 
     }

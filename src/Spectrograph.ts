@@ -58,7 +58,6 @@ export class Spectrograph {
 
 
         this.controlNode.parent = this.scene //TODO скорее всего это костыль!
-        console.log(this)
     }
     init() {
         this.ticker.start()

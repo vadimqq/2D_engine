@@ -11,9 +11,6 @@ export class EllipseGeometry extends BufferGeometry {
         const points = [];
         const indices = [];
         const step = (Math.PI * (round / 100 * 2)) / segments;
-        //const start_rad = START_DEG * Math.PI / 180;
-
-        // const vector = new Vector2(25, 25);
 
         for (let i = 0; i <= segments; i++) {
             const inc = step * i + start_rad;
@@ -29,10 +26,19 @@ export class EllipseGeometry extends BufferGeometry {
             points.push(innerPointX, innerPointY);
 
             const start = i * 2;
-            indices.push(start, start + 1, start + 2);
-            indices.push(start + 1, start + 2, start + 3);
-        }
+            // indices.push(start, start + 1, start + 2);
+            // indices.push(start + 1, start + 2, start + 3);
 
+            if(i !== segments) {
+                indices.push(start, start + 1, start + 2);
+                indices.push(start + 1, start + 2, start + 3);
+            }
+        }
+        // indices.pop();
+        // indices.pop();
+        // indices.pop();
+        // indices.pop();
+        console.log();
         this.position = {
             numComponents: 2,
             data: points,

@@ -16,7 +16,7 @@ export class EllipsePlugin implements Plugin {
             const ellipse = options.nodeManager.createNode('ELLIPSE',{ transform: [
                 1, 0, 0,
                 0, 1, 0,
-                Math.floor(Math.random() * 800), Math.floor(Math.random() * 600), 1
+                Math.floor(Math.random() * 900), Math.floor(Math.random() * 600), 1
             ]})
 
             options.scene.add_child(ellipse)
