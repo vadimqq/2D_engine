@@ -12,6 +12,8 @@ void main() {
     mod(gl_FragCoord.y - u_cameraPosition.y * u_zoom,u_zoom) <1.0
    ){
       outColor = vec4(0.0, 0.0, 0.0, 0.3);
-   }else {discard;}                      
+   } else {
+      discard;
+   }                      
  }
 `
