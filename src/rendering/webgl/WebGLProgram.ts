@@ -1,10 +1,16 @@
+import { Camera } from "../../camera/Camera";
+import { Node } from "../../core/Node/Node";
 import { WebGLShader } from "./WebGLShader";
+import { AttributeSetter } from "./setters/AttributeSetter";
+import { UniformSetter } from "./setters/UniformSetter";
 
 export class WebGLProgram {
     gl: WebGL2RenderingContext
     program: WebGLProgram;
     vertexShader: WebGLShader;
 	fragmentShader: WebGLShader;
+    uniformSetter: UniformSetter;
+	attributeSetter: AttributeSetter;
 
     constructor(gl: WebGL2RenderingContext, vs: string, fs: string) {
         this.gl = gl;
@@ -24,5 +30,10 @@ export class WebGLProgram {
 
         gl.deleteShader(this.vertexShader);
         gl.deleteShader(this.fragmentShader);
+
+        this.uniformSetter = new UniformSetter(gl, this.program);
+		this.attributeSetter  = new AttributeSetter(gl, this.program);
     }
+
+    applyInstruction(node: Node, uniforms: { [key: string]: unknown }, camera: Camera) {}
 }

@@ -1,10 +1,11 @@
 import { Color } from "../../core/Color";
-import { CreateNodeOptionsType, NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
+import { CreateNodeOptionsType, NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { SHADER_TYPE } from "../../rendering/const";
 import { RectangleGeometry } from "./geometry";
 
 export class Rectangle extends Node<RectangleGeometry> {
-    rectangleTopLeftCornerRadius: number = 5;
+    rectangleTopLeftCornerRadius: number = 10;
     rectangleTopRightCornerRadius: number = 0;
     rectangleBottomLeftCornerRadius: number = 0;
     rectangleBottomRightCornerRadius: number = 0;
@@ -22,7 +23,7 @@ export class Rectangle extends Node<RectangleGeometry> {
             systemType: NODE_SYSTEM_TYPE.GRAPHICS,
             shaderType: SHADER_TYPE.PRIMITIVE
         })
-       this.setSize(20, 20);
+       this.setSize(50, 50);
     }
     //OVERRIDE
     setSize(x: number, y: number) {

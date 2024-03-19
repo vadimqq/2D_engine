@@ -1,5 +1,6 @@
 import { ControlNode } from "../../controlNode/controlNode";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Tool } from "../../core/ToolManager/Tool";
 import { SpectrographMouseEvent } from "../../events/MouseEvents/SpectrographMouseEvent";
 import { Vector2 } from "../../math/Vector2";

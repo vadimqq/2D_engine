@@ -1,15 +1,16 @@
 import { Camera } from "../../camera/Camera";
 import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Plugin, PluginInitOptions } from "../../core/PluginManager/Plugin";
-import fs from "./shaders/fs";
-import vs from "./shaders/vs";
+import { PixelGridProgram } from "./PixelGridProgram";
 
 export class PixelGridPlugin implements Plugin {
     name = 'PIXEL_GRID_PLUGIN';
     gridNode: Grid;
     constructor(options: PluginInitOptions) {
-        options.renderer.registerProgram('PIXEL_GRID', vs, fs)
+
+        options.renderer.registerProgram('PIXEL_GRID', PixelGridProgram)
         this.gridNode = new Grid()
         options.renderer.postEffects.push(this.gridNode)
 
@@ -39,7 +40,7 @@ export class Grid extends Node<PixelGridGeometry> {
     constructor() {
         super({
             geometry: new PixelGridGeometry(),
-            systemType: NODE_SYSTEM_TYPE.GRAPHICS,
+            systemType: NODE_SYSTEM_TYPE.EFFECT,
             shaderType: 'PIXEL_GRID'
         })
         this.isVisible = false;

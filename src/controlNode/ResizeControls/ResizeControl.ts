@@ -1,17 +1,19 @@
 import { Camera } from "../../camera/Camera";
 import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
 
 export class ControlGeometry extends BufferGeometry {
     constructor(x = 1, y = 1) {
         super()
-        this.position = { numComponents: 2, data: [0, 0, x, 0, 0, y, x, y], };
+        this.position = { numComponents: 2, data: [0, 0, x, 0, x, y, 0, y], };
+        this.indices =  { numComponents: 2, data: [0, 1, 2, 2, 3, 0 ]};
     }
     updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [0, 0, size.x, 0, 0, size.y, size.x, size.y], };
+        this.position = { numComponents: 2, data: [0, 0, size.x, 0, size.x, size.y, 0, size.y], };
     }
 }
 
@@ -37,7 +39,7 @@ export class ResizeControl extends Node<ControlGeometry> {
                 a: 1,
             }),
             systemType: NODE_SYSTEM_TYPE.RESIZE_CONTROL,
-            shaderType: SHADER_TYPE.CONTROL_NODE_SHADER
+            shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE
         })
         this.instrumentType = type
         this.size.set(size, size)

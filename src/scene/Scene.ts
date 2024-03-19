@@ -1,5 +1,6 @@
 import { Color } from "../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../core/Node/Node";
+import { Node } from "../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../core/Node/model";
 import { SHADER_TYPE } from "../rendering/const";
 import { SceneGeometry } from "./SceneGeometry";
 

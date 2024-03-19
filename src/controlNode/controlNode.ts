@@ -1,6 +1,7 @@
 import { BufferGeometry } from "../core/BufferGeometry/BufferGeometry";
 import { Color } from "../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../core/Node/Node";
+import { Node } from "../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../core/Node/model";
 import { Matrix3 } from "../math/Matrix3";
 import { Vector2 } from "../math/Vector2";
 import { SHADER_TYPE } from "../rendering/const";
@@ -35,7 +36,7 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			geometry: new ControlNodeGeometry(),
         	color: new Color({ r: 1, g: 1, b: 1, a: 0 }),
 			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
-			shaderType: SHADER_TYPE.CONTROL_NODE_SHADER,
+			shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE,
 		});
 		this.rotateVertexControlManager = new RotateVertexControlManager(this);
 		this.rotateVertexControlManager.init()
@@ -177,7 +178,6 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			const { node, prevMatrix, prevSize } = this.nodeMap.get(guid)
 			prevMatrix.copy(node.localMatrix)
 			prevSize.copy(node.size)
-			console.log(node)
 		})
 	}
 

@@ -4,35 +4,7 @@ import { Matrix3 } from '../../math/Matrix3';
 import { Vector2 } from '../../math/Vector2';
 import { BufferGeometry } from '../BufferGeometry/BufferGeometry';
 import { Color } from '../Color';
-import { NodeEvents } from './model';
-
-type AnyEvent = {
-    [K: ({} & string) | ({} & symbol)]: any;
-}
-
-export type InitialOptionsType<G> = {
-	geometry: G;
-	color: Color;
-	transform?: [number, number, number, number, number, number, number, number, number,];
-	systemType: NODE_SYSTEM_TYPE;
-	shaderType: string;
-};
-
-export type CreateNodeOptionsType = {
-	color?: Color;
-	transform?: [number, number, number, number, number, number, number, number, number,];
-	systemType?: NODE_SYSTEM_TYPE;
-	shaderType?: string;
-}
-
-export enum NODE_SYSTEM_TYPE {
-	SCENE = 'SCENE',
-	CONTROL_NODE = 'CONTROL_NODE',
-	RESIZE_CONTROL = 'RESIZE_CONTROL',
-	ROTATE_CONTROL = 'ROTATE_CONTROL',
-	GRAPHICS = 'GRAPHICS',
-	EFFECT = 'EFFECT',
-}
+import { AnyEvent, InitialOptionsType, NODE_SYSTEM_TYPE, NodeEvents } from './model';
 
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
 	guid: number;
