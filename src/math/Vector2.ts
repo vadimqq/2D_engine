@@ -35,6 +35,13 @@ export class Vector2{
 		return this;
 	}
 
+	public add(vec: Vector2) {
+		this.x += vec.x;
+		this.y += vec.y;
+
+		return this;
+	}
+
     public applyMatrix3(matrix: Matrix3) {
 		const x = this.x, y = this.y;
 		const e = matrix.elements;

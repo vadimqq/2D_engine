@@ -1,3 +1,4 @@
+import { Vector2 } from "./Vector2";
 
 export class Matrix3 {
 	elements = [
@@ -117,6 +118,9 @@ export class Matrix3 {
 		this.elements[7] = -((a1 * this.elements[7]) - (b1 * tx1)) / n;
 	
 		return this;
+	}
+	getPosition() {
+		return new Vector2(this.elements[6], this.elements[7])
 	}
 }
 const _m3 = new Matrix3()

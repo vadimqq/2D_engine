@@ -5,7 +5,7 @@ import { SHADER_TYPE } from "../../rendering/const";
 import { RectangleGeometry } from "./geometry";
 
 export class Rectangle extends Node<RectangleGeometry> {
-    rectangleTopLeftCornerRadius: number = 10;
+    rectangleTopLeftCornerRadius: number = 30;
     rectangleTopRightCornerRadius: number = 0;
     rectangleBottomLeftCornerRadius: number = 0;
     rectangleBottomRightCornerRadius: number = 0;
@@ -23,7 +23,7 @@ export class Rectangle extends Node<RectangleGeometry> {
             systemType: NODE_SYSTEM_TYPE.GRAPHICS,
             shaderType: SHADER_TYPE.PRIMITIVE
         })
-       this.setSize(50, 50);
+       this.setSize(100, 100);
     }
     //OVERRIDE
     setSize(x: number, y: number) {

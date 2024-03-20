@@ -5,6 +5,7 @@ import { Rectangle } from './Rectangle';
 
 const b = 0.55342686;
 const c = 0.99873585;
+
 const cubicBezier = new CubicBezier(10)
 export class RectangleGeometry extends BufferGeometry {
     constructor() {
