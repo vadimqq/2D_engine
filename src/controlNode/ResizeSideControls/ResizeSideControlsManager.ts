@@ -1,39 +1,38 @@
 import { ControlNode } from "../controlNode";
-import { ResizeSideControl } from "./ResizeSideControl";
+import { RESIZE_SIDE_CONTROL_TYPE, ResizeSideControl } from "./ResizeSideControl";
 
 
 export class ResizeSideControlsManager{
-    leftTopControl: ResizeSideControl
-    rightTopControl: ResizeSideControl
-    rightBottomControl: ResizeSideControl
-    leftBottomControl: ResizeSideControl
+    leftControl: ResizeSideControl
+    topControl: ResizeSideControl
+    rightControl: ResizeSideControl
+    bottomControl: ResizeSideControl
 
     constructor(controlNode: ControlNode) {
-		this.leftTopControl = new ResizeSideControl(RESIZE_CONTROL_TYPE.LEFT_TOP)
-        controlNode.add_child(this.leftTopControl)
-		this.rightTopControl = new ResizeSideControl(RESIZE_CONTROL_TYPE.RIGHT_TOP)
-        controlNode.add_child(this.rightTopControl)
-		this.rightBottomControl = new ResizeSideControl(RESIZE_CONTROL_TYPE.RIGHT_BOTTOM)
-        controlNode.add_child(this.rightBottomControl)
-		this.leftBottomControl = new ResizeSideControl(RESIZE_CONTROL_TYPE.LEFT_BOTTOM)
-        controlNode.add_child(this.leftBottomControl)
+		this.leftControl = new ResizeSideControl(RESIZE_SIDE_CONTROL_TYPE.LEFT)
+        controlNode.add_child(this.leftControl)
+		this.topControl = new ResizeSideControl(RESIZE_SIDE_CONTROL_TYPE.TOP)
+        controlNode.add_child(this.topControl)
+		this.rightControl = new ResizeSideControl(RESIZE_SIDE_CONTROL_TYPE.RIGHT)
+        controlNode.add_child(this.rightControl)
+		this.bottomControl = new ResizeSideControl(RESIZE_SIDE_CONTROL_TYPE.BOTTOM)
+        controlNode.add_child(this.bottomControl)
 
         this._on_update = this._on_update.bind(this);
-
         controlNode.addListener('update', this._on_update)
     }
 
     init() {
-        this.leftTopControl.init()
-		this.rightTopControl.init()
-		this.rightBottomControl.init()
-		this.leftBottomControl.init()
+        this.leftControl.init()
+		this.topControl.init()
+		this.rightControl.init()
+		this.bottomControl.init()
     }
 
     _on_update() {
-        this.leftTopControl.update()
-		this.rightTopControl.update()
-		this.rightBottomControl.update()
-		this.leftBottomControl.update()
+        this.leftControl.update()
+		this.topControl.update()
+		this.rightControl.update()
+		this.bottomControl.update()
     }
 }

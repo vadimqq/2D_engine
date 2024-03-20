@@ -2,60 +2,58 @@ import EventEmitter from "eventemitter3";
 import { Camera } from "../../camera/Camera";
 import { ControlNode } from "../../controlNode/controlNode";
 import { Node } from "../../core/Node/Node";
-import { StreamManager } from "../../core/StreamManager/StreamManager";
 import { Extension, ExtensionInitOptions } from "../../core/SystemExtensionManager/Extension";
 import { Vector2 } from "../../math/Vector2";
 import { WebGLRenderer } from "../../rendering/WebGLRenderer";
 import { Scene } from "../../scene/Scene";
 import { SpectrographMouseEvent } from "./SpectrographMouseEvent";
 
-//TODO Похожий класс есть в контрол ноде, вычисления слишком сложные нужно думать как искать пересечения проще!
-class CalculateSizeService {
-	leftTop = new Vector2();
-	rightTop = new Vector2();
-	rightBottom = new Vector2();
-	leftBottom = new Vector2();
+class IntersectService {
+    p1 = new Vector2();
+    p2 = new Vector2();
+    p3 = new Vector2();
+    p4 = new Vector2();
 
-    min = new Vector2();
-    max = new Vector2();
+    v1 = new Vector2();
+    v2 = new Vector2();
+    v3 = new Vector2();
+    v4 = new Vector2();
 
-	calculateSizeMultiLayer(node: Node) {
-		this.leftTop
-		    .set(0, 0)
-			.applyMatrix3(node.worldMatrix);
-		this.rightTop
-			.set(node.size.x, 0)
-			.applyMatrix3(node.worldMatrix);
-		this.rightBottom
-			.set(node.size.x, node.size.y)
-			.applyMatrix3(node.worldMatrix);
-		this.leftBottom
-			.set(0, node.size.y)
-			.applyMatrix3(node.worldMatrix);
-	
-		const min = this.min
-			.copy(this.leftTop)
-			.min(this.rightTop)
-			.min(this.rightBottom)
-			.min(this.leftBottom);
-	
-		const max = this.max
-			.copy(this.leftTop)
-			.max(this.rightTop)
-			.max(this.rightBottom)
-			.max(this.leftBottom);
-	
-		return {
-            maxX: max.x,
-            maxY: max.y,
-            minX: min.x,
-            minY: min.y,
-        };
-	  }
+    findIntersect(nodeList: Node[], eventPoint: Vector2, intersectedLayers: Node[] = []) {
+        nodeList.forEach((node) => {
+            this.p1.set(0, 0).applyMatrix3(node.worldMatrix);
+            this.p2.set(node.size.x, 0).applyMatrix3(node.worldMatrix);
+            this.p3.set(node.size.x, node.size.y).applyMatrix3(node.worldMatrix);
+            this.p4.set(0, node.size.y).applyMatrix3(node.worldMatrix);
+    
+            this.v1.set(-(this.p2.y - this.p1.y), (this.p2.x - this.p1.x)); //Top
+            this.v2.set(-(this.p3.y - this.p2.y), (this.p3.x - this.p2.x)); //Right
+            this.v3.set(-(this.p4.y - this.p3.y), (this.p4.x - this.p3.x)); //Bottom
+            this.v4.set(-(this.p1.y - this.p4.y), (this.p1.x - this.p4.x)); //Left
+    
+            const c1 = -(this.v1.x * this.p1.x + this.v1.y * this.p1.y);
+            const c2 = -(this.v2.x * this.p2.x + this.v2.y * this.p2.y);
+            const c3 = -(this.v3.x * this.p3.x + this.v3.y * this.p3.y);
+            const c4 = -(this.v4.x * this.p4.x + this.v4.y * this.p4.y);
+            
+            if (
+                this.isIntersect(this.v1, c1, eventPoint.x, eventPoint.y)
+                && this.isIntersect(this.v2, c2, eventPoint.x, eventPoint.y)
+                && this.isIntersect(this.v3, c3, eventPoint.x, eventPoint.y)
+                && this.isIntersect(this.v4, c4, eventPoint.x, eventPoint.y)
+            ) {
+                intersectedLayers.push(node);
+            }     
+    
+        });
+        return intersectedLayers
+    }
+
+    isIntersect(v: Vector2, c: number, x: number, y: number) {
+        return (v.x * x + v.y * y + c) / Math.sqrt( v.x*v.x + v.y*v.y )  > 0;
+    }
+
 }
-
-const calculateSizeService = new CalculateSizeService();
-
 interface mouseEvents {
     _onPointerDown: [event: SpectrographMouseEvent];
     _onPointerMove: [event: SpectrographMouseEvent];
@@ -68,19 +66,18 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
     public renderer: WebGLRenderer;
     public camera: Camera;
     public scene: Scene;
-    public streamManager: StreamManager;
     public controlNode: ControlNode;
 
 
     mouseEvent: SpectrographMouseEvent;
+    intersectService = new IntersectService();
 
-    constructor({renderer, camera, scene, streamManger, controlNode}: ExtensionInitOptions) {
+    constructor({renderer, camera, scene, controlNode}: ExtensionInitOptions) {
         super()
         this.renderer = renderer;
         this.camera = camera;
         this.scene = scene;
         this.domElement = renderer.canvasElement // как заглушка для тайпскрипта
-        this.streamManager = streamManger
         this.mouseEvent = new SpectrographMouseEvent(this.camera, this.scene)
         this.controlNode = controlNode
 
@@ -143,21 +140,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
 
         testIntersect(nodeList: Node[], event: SpectrographMouseEvent) {
             event.intersectNodes = []
-            const intersects = findIntersect(nodeList, event.scenePosition)
+            const intersects = this.intersectService.findIntersect(nodeList, event.scenePosition)
             event.intersectNodes = intersects
         }
 }
-
-
-const findIntersect = (nodeList: Node[], eventPoint: {x: number, y: number}, intersectedLayers: Node[] = []) => {
-    nodeList.forEach((node) => {
-        const { maxX, minX, minY, maxY } = calculateSizeService.calculateSizeMultiLayer(node)
-        
-        const isIntersect = (eventPoint.x > minX && eventPoint.x < maxX) && (eventPoint.y > minY && eventPoint.y < maxY)
-        if (isIntersect) {
-            intersectedLayers.push(node)
-        }
-    });
-    return intersectedLayers
-}
-  

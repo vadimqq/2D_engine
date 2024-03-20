@@ -5,14 +5,13 @@ import { NODE_SYSTEM_TYPE } from "../core/Node/model";
 import { Matrix3 } from "../math/Matrix3";
 import { Vector2 } from "../math/Vector2";
 import { SHADER_TYPE } from "../rendering/const";
-import { RESIZE_CONTROL_TYPE } from "./ResizeControls/ResizeControl";
 import { ResizeControlsManager } from "./ResizeControls/ResizeControlsManager";
+import { ResizeSideControlsManager } from "./ResizeSideControls/ResizeSideControlsManager";
 import { RotateControlsManager } from "./RotateControls/RotateControlsManager";
 
 
 interface ControlNodeEvents {
 	'update': [node: ControlNode];
-	'change_visible': [node: ControlNode];
 }
 export class ControlNode extends Node<RectangleGeometry> {
 	shaderType: string;
@@ -22,8 +21,10 @@ export class ControlNode extends Node<RectangleGeometry> {
 	prevSize = new Vector2();//Размер до начала трансформации
 
 	private calculateSizeService = new CalculateSizeService();
-	private resizeVertexControlManager: ResizeControlsManager;
-	private rotateVertexControlManager: RotateControlsManager;
+	private resizeControlsManager: ResizeControlsManager;
+	private rotateControlsManager: RotateControlsManager;
+	private resizeSideControlsManager: ResizeSideControlsManager;
+
 
 
 	nodeMap = new Map<number,{
@@ -40,11 +41,15 @@ export class ControlNode extends Node<RectangleGeometry> {
 			shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE,
 		});
 		this.setIsVisible(false);
-		this.rotateVertexControlManager = new RotateControlsManager(this);
-		this.rotateVertexControlManager.init()
 
-		this.resizeVertexControlManager = new ResizeControlsManager(this);
-		this.resizeVertexControlManager.init()
+		this.resizeSideControlsManager = new ResizeSideControlsManager(this);
+		this.resizeSideControlsManager.init()
+
+		this.rotateControlsManager = new RotateControlsManager(this);
+		this.rotateControlsManager.init()
+
+		this.resizeControlsManager = new ResizeControlsManager(this);
+		this.resizeControlsManager.init()
 	}
 
 	setRotation(angle: number, offset: Vector2) {
@@ -86,22 +91,7 @@ export class ControlNode extends Node<RectangleGeometry> {
 		}
 		this._calculateSizeAndPosition()
 	}
-	applyScale(vector: Vector2, offset: RESIZE_CONTROL_TYPE = RESIZE_CONTROL_TYPE.LEFT_TOP) {
-		const positionAdj = new Vector2();
-
-		switch (offset) {
-			case RESIZE_CONTROL_TYPE.LEFT_TOP:
-				positionAdj.set(-vector.x, -vector.y)
-				break;
-			case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-				positionAdj.set(0, -vector.y)
-			break;
-			case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-				positionAdj.set(-vector.x, 0)
-			break;
-			default:
-				break;
-		}
+	applyScale(vector: Vector2, positionOffset: Vector2) {
 
 		if (this.nodeMap.size > 1) {
 			const testChange = new Vector2(
@@ -121,7 +111,7 @@ export class ControlNode extends Node<RectangleGeometry> {
 
 				node.localMatrix
 					.copy(this.prevWorldMatrix)
-					.translate(positionAdj.x, positionAdj.y)
+					.translate(positionOffset.x, positionOffset.y)
 					.scale(testChange.x, testChange.y)
 					.multiply(localMatrix)
 				
@@ -146,7 +136,7 @@ export class ControlNode extends Node<RectangleGeometry> {
 
 			const xMulti = newSizeX > 0 ? 1: -1;
 			const yMulti = newSizeY > 0 ? 1: -1;
-			node.localMatrix.copy(prevMatrix).scale(xMulti, yMulti).translate(positionAdj.x * xMulti, positionAdj.y * yMulti);
+			node.localMatrix.copy(prevMatrix).scale(xMulti, yMulti).translate(positionOffset.x * xMulti, positionOffset.y * yMulti);
 			node.setSize(Math.abs(newSizeX), Math.abs(newSizeY))
 			node.needUpdateMatrix = true
 		}
@@ -174,11 +164,6 @@ export class ControlNode extends Node<RectangleGeometry> {
 
 	hasNode(guid: number) {
 		return this.nodeMap.has(guid)
-	}
-
-	private setIsVisible(value: boolean) {
-		this.isVisible = value;
-		this.emit('change_visible', this)
 	}
 
 	clearNodeList() {

@@ -7,6 +7,7 @@ export type NodeEvents = {
     'removed': [container: Node];
     'child_removed': [child: Node, container: Node, index: number];
     'destroyed': [];
+	'change_visible': [node: Node];
 }
 
 export type AnyEvent = {
@@ -32,6 +33,7 @@ export enum NODE_SYSTEM_TYPE {
 	SCENE = 'SCENE',
 	CONTROL_NODE = 'CONTROL_NODE',
 	RESIZE_CONTROL = 'RESIZE_CONTROL',
+	RESIZE_SIDE_CONTROL = 'RESIZE_SIDE_CONTROL',
 	ROTATE_CONTROL = 'ROTATE_CONTROL',
 	GRAPHICS = 'GRAPHICS',
 	EFFECT = 'EFFECT',

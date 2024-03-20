@@ -1,14 +1,14 @@
-import { RESIZE_CONTROL_TYPE, ResizeControl } from "../../../controlNode/ResizeControls/ResizeControl";
+import { RESIZE_SIDE_CONTROL_TYPE, ResizeSideControl } from "../../../controlNode/ResizeSideControls/ResizeSideControl";
 import { Vector2 } from "../../../math/Vector2";
 import { ActionsType } from "../model";
 
-export const resizeControlActions: ActionsType & { positionOffset: Vector2; } = {
+export const resizeSideControlActions: ActionsType & { positionOffset: Vector2; } = {
     positionOffset: new Vector2(),
     onPointerDown: () => {},
     onPointerUp: () => {},
     onPointerMove: () => {},
     onDrag: ({intersect , controlNode, event, startMousePosition}) => {
-        const control = intersect as ResizeControl;
+        const control = intersect as ResizeSideControl;
 
         const sizeChange = event.scenePosition
             .sub(startMousePosition)
@@ -17,24 +17,24 @@ export const resizeControlActions: ActionsType & { positionOffset: Vector2; } = 
             .multiply(control.sizeMultiplier);
 
         switch (control.instrumentType) {
-			case RESIZE_CONTROL_TYPE.LEFT_TOP:
-				resizeControlActions.positionOffset.set(-sizeChange.x, -sizeChange.y)
+			case RESIZE_SIDE_CONTROL_TYPE.LEFT:
+				resizeSideControlActions.positionOffset.set(-sizeChange.x, 0)
 				break;
-			case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-				resizeControlActions.positionOffset.set(0, -sizeChange.y)
+			case RESIZE_SIDE_CONTROL_TYPE.TOP:
+				resizeSideControlActions.positionOffset.set(0, -sizeChange.y)
 			break;
-			case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-				resizeControlActions.positionOffset.set(-sizeChange.x, 0)
+			case RESIZE_SIDE_CONTROL_TYPE.RIGHT:
+				resizeSideControlActions.positionOffset.set(0, 0)
 			break;
-            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
-				resizeControlActions.positionOffset.set(0, 0)
+            case RESIZE_SIDE_CONTROL_TYPE.BOTTOM:
+				resizeSideControlActions.positionOffset.set(-sizeChange.x, 0)
 			break;
 			default:
 				break;
 		}
         controlNode.applyScale(
             sizeChange,
-            resizeControlActions.positionOffset
+            resizeSideControlActions.positionOffset
         )
     },
     onDragEnd: ({controlNode}) => {

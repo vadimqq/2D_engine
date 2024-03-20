@@ -69,7 +69,6 @@ export class ResizeControl extends Node<RectangleGeometry> {
                 this.localMatrix.translate(-halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-                this.parent.size.x
                 this.localMatrix.translate(this.parent.size.x - halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:

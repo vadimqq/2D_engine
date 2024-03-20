@@ -80,4 +80,9 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 		this.size.set(x, y)
 	}
 	beforeRender(camera: Camera) {}
+
+	setIsVisible(value: boolean) {
+		this.isVisible = value;
+		this.emit('change_visible', this)
+	}
 }

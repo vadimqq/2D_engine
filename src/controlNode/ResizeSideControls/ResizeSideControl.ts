@@ -1,63 +1,52 @@
 import { Camera } from "../../camera/Camera";
 import { Color } from "../../core/Color";
-import { BufferGeometry } from "../../core/Geometry";
+import { RectangleGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
 import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
 
-export class ControlGeometry extends BufferGeometry {
-    constructor(x = 1, y = 1) {
-        super()
-        this.position = { numComponents: 2, data: [0, 0, x, 0, x, y, 0, y], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 2, 3, 0 ]};
-    }
-    updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [0, 0, size.x, 0, size.x, size.y, 0, size.y], };
-    }
+
+export enum RESIZE_SIDE_CONTROL_TYPE {
+    LEFT = 'LEFT',
+    TOP = 'TOP',
+    RIGHT = 'RIGHT',
+    BOTTOM = 'BOTTOM',
 }
 
-export enum RESIZE_CONTROL_TYPE {
-    LEFT_TOP = 'LEFT_TOP',
-    RIGHT_TOP = 'RIGHT_TOP',
-    RIGHT_BOTTOM = 'RIGHT_BOTTOM',
-    LEFT_BOTTOM = 'LEFT_BOTTOM',
-}
-
-const size = 10;
-
-export class ResizeSideControl extends Node<ControlGeometry> {
-    instrumentType: RESIZE_CONTROL_TYPE;
+const width = 10;
+export class ResizeSideControl extends Node<RectangleGeometry> {
+    instrumentType: RESIZE_SIDE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
-    constructor(type: RESIZE_CONTROL_TYPE) {
+    constructor(type: RESIZE_SIDE_CONTROL_TYPE) {
         super({
-            geometry: new ControlGeometry(size, size),
+            geometry: new RectangleGeometry(width, width),
             color: new Color({
-                r: 1,
-                g: 1,
-                b: 1,
-                a: 1,
+                r: 0,
+                g: 0,
+                b: 0,
+                a: 0,
             }),
-            systemType: NODE_SYSTEM_TYPE.RESIZE_CONTROL,
-            shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE
+            systemType: NODE_SYSTEM_TYPE.RESIZE_SIDE_CONTROL,
+            shaderType: SHADER_TYPE.PRIMITIVE
         })
         this.instrumentType = type
-        this.size.set(size, size)
+        this.size.set(width, width)
 
         switch (this.instrumentType) {
-            case RESIZE_CONTROL_TYPE.LEFT_TOP:
-                this.sizeMultiplier = new Vector2(-1, -1)
+            case RESIZE_SIDE_CONTROL_TYPE.LEFT:
+                this.sizeMultiplier = new Vector2(-1, 0)
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-                this.sizeMultiplier = new Vector2(1, -1)
+            case RESIZE_SIDE_CONTROL_TYPE.TOP:
+                this.sizeMultiplier = new Vector2(0, -1)
 
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
-                this.sizeMultiplier = new Vector2(1, 1)
+            case RESIZE_SIDE_CONTROL_TYPE.RIGHT:
+                this.sizeMultiplier = new Vector2(1, 0)
 
                 break;
-            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-                this.sizeMultiplier = new Vector2(-1, 1)
+            case RESIZE_SIDE_CONTROL_TYPE.BOTTOM:
+                this.sizeMultiplier = new Vector2(0, 1)
                 break;
             default:
                 break;
@@ -74,20 +63,21 @@ export class ResizeSideControl extends Node<ControlGeometry> {
 
     updatePosition() {
         this.localMatrix.identity()
-        const halfSize = this.size.x / 2;
+        const halfWidth = this.size.x / 2;
+        const halfHeight = this.size.y / 2;
+
         switch (this.instrumentType) {
-            case RESIZE_CONTROL_TYPE.LEFT_TOP:
-                this.localMatrix.translate(-halfSize, -halfSize)
+            case RESIZE_SIDE_CONTROL_TYPE.LEFT:
+                this.localMatrix.translate(-halfWidth, 0)
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-                this.parent.size.x
-                this.localMatrix.translate(this.parent.size.x - halfSize, -halfSize)
+            case RESIZE_SIDE_CONTROL_TYPE.TOP:
+                this.localMatrix.translate(0, -halfHeight)
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
-                this.localMatrix.translate(this.parent.size.x -halfSize, this.parent.size.y - halfSize)
+            case RESIZE_SIDE_CONTROL_TYPE.RIGHT:
+                this.localMatrix.translate(this.parent.size.x - halfWidth, 0)
                 break;
-            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-                this.localMatrix.translate(-halfSize, this.parent.size.y - halfSize)
+            case RESIZE_SIDE_CONTROL_TYPE.BOTTOM:
+                this.localMatrix.translate(0, this.parent.size.y - halfHeight)
                 break;
             default:
                 break;
@@ -108,7 +98,23 @@ export class ResizeSideControl extends Node<ControlGeometry> {
 		return this.worldMatrix
 	}
     beforeRender(camera: Camera): void {
-        this.size.set(size / camera.zoom, size / camera.zoom)
+        this.size.set(width / camera.zoom, width / camera.zoom)
+        switch (this.instrumentType) {
+            case RESIZE_SIDE_CONTROL_TYPE.LEFT:
+                this.size.set(width / camera.zoom, this.parent.size.y)
+                break;
+            case RESIZE_SIDE_CONTROL_TYPE.TOP:
+                this.size.set(this.parent.size.x, width / camera.zoom)
+                break;
+            case RESIZE_SIDE_CONTROL_TYPE.RIGHT:
+                this.size.set(width / camera.zoom, this.parent.size.y)
+                break;
+            case RESIZE_SIDE_CONTROL_TYPE.BOTTOM:
+                this.size.set(this.parent.size.x, width / camera.zoom)
+                break;
+            default:
+                break;
+        }
 
         this.geometry.updateGeometry(this.size)
         this.updatePosition()
