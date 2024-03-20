@@ -1,16 +1,17 @@
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
 import { Plugin, PluginInitOptions } from "../../core/PluginManager/Plugin";
 import { RectangleGeometry } from "../Rectangle_Plugin/geometry";
 import fs from "./shaders/fs";
 import vs from "./shaders/vs";
 import {RectangleTool} from "../Ellipse_Plugin/tool";
 import {Ellipse} from "./Ellipse";
+import {NODE_SYSTEM_TYPE} from "../../core/Node/model";
 
 export class EllipseShader_Plugin implements Plugin {
     name = 'PIXEL_GRID_PLUGIN';
 
     constructor(options: PluginInitOptions) {
-        options.renderer.registerProgram('ELLIPSE_SHADER', vs, fs)
+        // options.renderer.registerProgram('ELLIPSE_SHADER', vs, fs)
 
         options.toolManager.registerNewTool('ELLIPSE_TOOL', new RectangleTool(options.nodeManager))
         options.nodeManager.registerNewNode('ELLIPSE_SHADER', Ellipse)

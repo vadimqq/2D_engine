@@ -1,7 +1,8 @@
 import { Color } from "../../core/Color";
-import { CreateNodeOptionsType, NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
 import { SHADER_TYPE } from "../../rendering/const";
 import { EllipseGeometry } from "./geometry";
+import {CreateNodeOptionsType, NODE_SYSTEM_TYPE} from "../../core/Node/model";
 
 export class Ellipse extends Node<EllipseGeometry> {
     private radius: number;

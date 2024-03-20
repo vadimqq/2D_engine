@@ -10,7 +10,7 @@ const  spectrograph = new Spectrograph()
 spectrograph.pluginManager.addPlugin(MoveToolPlugin)
 spectrograph.pluginManager.addPlugin(RectanglePlugin)
 spectrograph.pluginManager.addPlugin(EllipsePlugin)
-spectrograph.pluginManager.addPlugin(EllipseShader_Plugin)
+// spectrograph.pluginManager.addPlugin(EllipseShader_Plugin)
 spectrograph.pluginManager.addPlugin(CameraControlPlugin)
 
 spectrograph.init()
