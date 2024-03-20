@@ -2,6 +2,7 @@ export default /* glsl */`
 precision mediump float;
 
 uniform vec4 u_color;
+
 varying vec2 v_position;
 varying vec2 v_border;
 

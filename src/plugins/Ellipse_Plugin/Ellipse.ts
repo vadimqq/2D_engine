@@ -1,12 +1,12 @@
 
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
+import { BufferGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
         
 const radius = 50
 const segment = 100
 
-export class Ellipse extends Node<BufferGeometry> {
+export class Ellipse extends Node {
     constructor() {
         const points = [0, 0]
         const indices = []

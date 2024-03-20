@@ -1,20 +1,10 @@
 import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
+import { RectangleGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
 import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
-
-export class ControlGeometry extends BufferGeometry {
-    constructor(x = 1, y = 1) {
-        super()
-        this.position = { numComponents: 2, data: [0, 0, x, 0, 0, y, x, y], };
-    }
-    updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [0, 0, size.x, 0, 0, size.y, size.x, size.y], };
-    }
-}
 
 export enum RESIZE_CONTROL_TYPE {
     LEFT_TOP = 'LEFT_TOP',
@@ -27,12 +17,12 @@ const sizeX = 20;
 const sizeY = 15;
 
 
-export class RotateControl extends Node<ControlGeometry> {
+export class RotateControl extends Node<RectangleGeometry> {
     instrumentType: RESIZE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
     constructor(type: RESIZE_CONTROL_TYPE) {
         super({
-            geometry: new ControlGeometry(sizeX, sizeY),
+            geometry: new RectangleGeometry(sizeX, sizeY),
             color: new Color({
                 r: 0,
                 g: 0,

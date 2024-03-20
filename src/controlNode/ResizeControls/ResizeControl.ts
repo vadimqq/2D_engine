@@ -1,21 +1,10 @@
 import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
+import { RectangleGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
 import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
-
-export class ControlGeometry extends BufferGeometry {
-    constructor(x = 1, y = 1) {
-        super()
-        this.position = { numComponents: 2, data: [0, 0, x, 0, x, y, 0, y], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 2, 3, 0 ]};
-    }
-    updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [0, 0, size.x, 0, size.x, size.y, 0, size.y], };
-    }
-}
 
 export enum RESIZE_CONTROL_TYPE {
     LEFT_TOP = 'LEFT_TOP',
@@ -26,12 +15,12 @@ export enum RESIZE_CONTROL_TYPE {
 
 const size = 10;
 
-export class ResizeControl extends Node<ControlGeometry> {
+export class ResizeControl extends Node<RectangleGeometry> {
     instrumentType: RESIZE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
     constructor(type: RESIZE_CONTROL_TYPE) {
         super({
-            geometry: new ControlGeometry(size, size),
+            geometry: new RectangleGeometry(size, size),
             color: new Color({
                 r: 1,
                 g: 1,
@@ -80,7 +69,6 @@ export class ResizeControl extends Node<ControlGeometry> {
                 this.localMatrix.translate(-halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-                this.parent.size.x
                 this.localMatrix.translate(this.parent.size.x - halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:

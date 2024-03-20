@@ -1,5 +1,5 @@
 import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
+import { BufferGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
 import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Plugin, PluginInitOptions } from "../../core/PluginManager/Plugin";

@@ -1,12 +1,13 @@
 import earcut from 'earcut';
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
+import { BufferGeometry } from "../../core/Geometry";
 import { CubicBezier } from '../../math/CubicBezier';
 import { Rectangle } from './Rectangle';
 
 const b = 0.55342686;
 const c = 0.99873585;
+
 const cubicBezier = new CubicBezier(10)
-export class RectangleGeometry extends BufferGeometry {
+export class RectangleBezierGeometry extends BufferGeometry {
     constructor() {
         super()
     }
