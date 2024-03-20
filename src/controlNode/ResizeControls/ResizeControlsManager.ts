@@ -1,7 +1,7 @@
 import { ControlNode } from "../controlNode";
 import { RESIZE_CONTROL_TYPE, ResizeControl } from "./ResizeControl";
 
-export class ResizeVertexControlManager{
+export class ResizeControlsManager {
     leftTopControl: ResizeControl
     rightTopControl: ResizeControl
     rightBottomControl: ResizeControl

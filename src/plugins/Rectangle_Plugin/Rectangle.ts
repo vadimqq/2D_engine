@@ -2,9 +2,9 @@ import { Color } from "../../core/Color";
 import { Node } from "../../core/Node/Node";
 import { CreateNodeOptionsType, NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { SHADER_TYPE } from "../../rendering/const";
-import { RectangleGeometry } from "./geometry";
+import { RectangleBezierGeometry } from "./geometry";
 
-export class Rectangle extends Node<RectangleGeometry> {
+export class Rectangle extends Node<RectangleBezierGeometry> {
     rectangleTopLeftCornerRadius: number = 30;
     rectangleTopRightCornerRadius: number = 0;
     rectangleBottomLeftCornerRadius: number = 0;
@@ -12,7 +12,7 @@ export class Rectangle extends Node<RectangleGeometry> {
 
     constructor({ transform }: CreateNodeOptionsType) {
         super({
-            geometry: new RectangleGeometry(),
+            geometry: new RectangleBezierGeometry(),
             color: new Color({
                 r: 209 / 255,
                 g: 209 / 255,

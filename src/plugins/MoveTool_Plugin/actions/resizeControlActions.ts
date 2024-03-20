@@ -7,12 +7,12 @@ export const resizeControlActions: ActionsType = {
     onPointerMove: () => {},
     onDrag: ({intersect , controlNode, event, startMousePosition}) => {
         const control = intersect as ResizeControl;
-        controlNode.setScale(
+        controlNode.applyScale(
             event.scenePosition.
             sub(startMousePosition)
-            .multiply(control.sizeMultiplier)
             .round()
-            .applyMatrix3(controlNode.inverseWorldMatrix),
+            .applyMatrix3(controlNode.inverseWorldMatrix)
+            .multiply(control.sizeMultiplier),
             control.instrumentType
         )
     },

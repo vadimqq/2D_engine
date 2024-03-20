@@ -3,11 +3,10 @@ import { ControlNode } from "../../controlNode/controlNode";
 import { Matrix3 } from "../../math/Matrix3";
 import { Vector2 } from "../../math/Vector2";
 import { Scene } from "../../scene/Scene";
-import { BufferGeometry } from "../BufferGeometry/BufferGeometry";
 import { Node } from "../Node/Node";
 
 export class Frustum {
-    nodesInViewport: Node<BufferGeometry>[] = [];
+    nodesInViewport: Node[] = [];
     projectionMatrix: Matrix3
     leftTop = new Vector2();
     rightBottom = new Vector2();
@@ -30,7 +29,7 @@ export class Frustum {
             camera.needUpdateFrustum = false
         }
     }
-    findIntersect(nodeList: Node<BufferGeometry>[]) {
+    findIntersect(nodeList: Node[]) {
         nodeList.forEach((node) => {
             if (node.isVisible) {
                 const isIntersect = this.intersects(node)
@@ -42,7 +41,7 @@ export class Frustum {
         });
     }
 
-    intersects(node: Node<BufferGeometry>) {
+    intersects(node: Node) {
         const { maxX, maxY, minX, minY } = this.calculateMinMaxService.calculateSizeMultiLayer(node);
 
         return !(this.leftTop.y > maxY || this.rightBottom.y < minY || this.rightBottom.x < minX || this.leftTop.x > maxX)
@@ -58,7 +57,7 @@ class CalculateMinMaxService {
     min = new Vector2();
     max = new Vector2();
 
-	calculateSizeMultiLayer(node: Node<BufferGeometry>) {
+	calculateSizeMultiLayer(node: Node) {
 		this.leftTop
 		    .set(0, 0)
 			.applyMatrix3(node.worldMatrix);

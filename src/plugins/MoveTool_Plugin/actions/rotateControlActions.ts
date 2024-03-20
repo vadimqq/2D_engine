@@ -6,9 +6,12 @@ export const rotateControlActions: ActionsType & {startAngle: number; rotateVect
     rotateVector: new Vector2(),
     rotateOffsetVector: new Vector2(),
     onPointerDown: ({controlNode, startMousePosition}) => {
-        const vec = startMousePosition.clone().sub(controlNode.centerVector).applyMatrix3(controlNode.inverseWorldMatrix)
+        rotateControlActions.rotateOffsetVector
+            .copy(controlNode.size)
+            .divideScalar(2)
+            .applyMatrix3(controlNode.worldMatrix);
+        const vec = startMousePosition.clone().sub(rotateControlActions.rotateOffsetVector).applyMatrix3(controlNode.inverseWorldMatrix)
         rotateControlActions.startAngle = Math.atan2(vec.y, vec.x);
-        rotateControlActions.rotateOffsetVector.copy(controlNode.centerVector)
     },
     onPointerUp: () => {},
     onPointerMove: () => {},

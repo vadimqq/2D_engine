@@ -2,8 +2,8 @@ import EventEmitter from 'eventemitter3';
 import { Camera } from '../../camera/Camera';
 import { Matrix3 } from '../../math/Matrix3';
 import { Vector2 } from '../../math/Vector2';
-import { BufferGeometry } from '../BufferGeometry/BufferGeometry';
 import { Color } from '../Color';
+import { BufferGeometry } from '../Geometry';
 import { AnyEvent, InitialOptionsType, NODE_SYSTEM_TYPE, NodeEvents } from './model';
 
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
@@ -15,8 +15,8 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 	needUpdateMatrix = true;
 	size = new Vector2(1, 1)
 	
-	parent: Node<BufferGeometry> | null = null;
-	children: Node<BufferGeometry>[] = [];
+	parent: Node | null = null;
+	children: Node[] = [];
 
 	geometry: G;
 	color: Color;
@@ -36,7 +36,7 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 		}
 	}
 
-	add_child(object: Node<BufferGeometry>) {
+	add_child(object: Node) {
 		if (object.parent !== null) {
 			object.parent.remove_child(object);
 		}
@@ -46,7 +46,7 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
         object.emit('added', this);
 	}
 
-	remove_child(object: Node<BufferGeometry>) {
+	remove_child(object: Node) {
 		const index = this.children.indexOf( object );
 		if (index > -1) {
 			this.children.splice( index, 1 );

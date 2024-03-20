@@ -1,7 +1,7 @@
 import { ControlNode } from "../controlNode";
 import { RESIZE_CONTROL_TYPE, RotateControl } from "./RotateControl";
 
-export class RotateVertexControlManager{
+export class RotateControlsManager{
     leftTopControl: RotateControl
     rightTopControl: RotateControl
     rightBottomControl: RotateControl

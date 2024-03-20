@@ -1,4 +1,4 @@
-import { BufferGeometry } from "../core/BufferGeometry/BufferGeometry";
+import { BufferGeometry } from "../core/Geometry";
 import { Vector2 } from "../math/Vector2";
 
 export class SceneGeometry extends BufferGeometry {

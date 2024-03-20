@@ -1,7 +1,6 @@
 import EventEmitter from "eventemitter3";
 import { Camera } from "../../camera/Camera";
 import { ControlNode } from "../../controlNode/controlNode";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Node } from "../../core/Node/Node";
 import { StreamManager } from "../../core/StreamManager/StreamManager";
 import { Extension, ExtensionInitOptions } from "../../core/SystemExtensionManager/Extension";
@@ -20,7 +19,7 @@ class CalculateSizeService {
     min = new Vector2();
     max = new Vector2();
 
-	calculateSizeMultiLayer(node: Node<BufferGeometry>) {
+	calculateSizeMultiLayer(node: Node) {
 		this.leftTop
 		    .set(0, 0)
 			.applyMatrix3(node.worldMatrix);
@@ -150,7 +149,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
 }
 
 
-const findIntersect = (nodeList: Node<BufferGeometry>[], eventPoint: {x: number, y: number}, intersectedLayers: Node<BufferGeometry>[] = []) => {
+const findIntersect = (nodeList: Node[], eventPoint: {x: number, y: number}, intersectedLayers: Node[] = []) => {
     nodeList.forEach((node) => {
         const { maxX, minX, minY, maxY } = calculateSizeService.calculateSizeMultiLayer(node)
         

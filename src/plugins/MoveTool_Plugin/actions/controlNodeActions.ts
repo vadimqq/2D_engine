@@ -21,8 +21,8 @@ export const controlNodeActions: ActionsType & { isPointerDownCalled: boolean } 
                 controlNode.clearNodeList()
                 controlNode.addNode(graphicsNode)
             }
-            controlNodeActions.isPointerDownCalled = false;
         }
+        controlNodeActions.isPointerDownCalled = false;
     },
     onPointerDown: () => {
         controlNodeActions.isPointerDownCalled = true;

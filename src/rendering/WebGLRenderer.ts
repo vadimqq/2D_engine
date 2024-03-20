@@ -1,8 +1,8 @@
 
 import { Camera } from '../camera/Camera';
 import { ControlNode } from '../controlNode/controlNode';
-import { BufferGeometry } from '../core/BufferGeometry/BufferGeometry';
 import { Frustum } from '../core/Frustum/Frustum';
+import { BufferGeometry } from '../core/Geometry';
 import { Node } from '../core/Node/Node';
 import { Matrix3 } from '../math/Matrix3';
 import { Scene } from '../scene/Scene';
