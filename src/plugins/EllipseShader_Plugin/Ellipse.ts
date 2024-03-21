@@ -3,8 +3,9 @@ import { Node } from "../../core/Node/Node";
 import { SHADER_TYPE } from "../../rendering/const";
 import { EllipseGeometry } from "./geometry";
 import {CreateNodeOptionsType, NODE_SYSTEM_TYPE} from "../../core/Node/model";
+import {RectangleGeometry} from "../../core/Geometry";
 
-export class Ellipse extends Node<EllipseGeometry> {
+export class Ellipse extends Node<RectangleGeometry> {
     private radius: number;
     private innerRadius: number;
     private segments: number;
@@ -12,16 +13,16 @@ export class Ellipse extends Node<EllipseGeometry> {
     private start_rad: number;
     constructor({ transform }: CreateNodeOptionsType) {
         super({
-            geometry: new EllipseGeometry(),
+            geometry: new RectangleGeometry(),
             color: new Color({
-                r: 109 / 255,
+                r: 209 / 255,
                 g: 200 / 255,
                 b: 150 / 255,
                 a: 1,
             }),
             transform,
             systemType: NODE_SYSTEM_TYPE.GRAPHICS,
-            shaderType: SHADER_TYPE.PRIMITIVE
+            shaderType: "ELLIPSE_SHADER"
         })
        this.size.set(100, 100)
 
@@ -31,14 +32,7 @@ export class Ellipse extends Node<EllipseGeometry> {
         this.round = 100; //        this.round = round;
         this.start_rad = 0; //        this.start_rad = start_rad;
 
-       this.geometry.updateGeometry(
-            this.radius,
-            this.innerRadius,
-            this.segments,
-            this.round,
-            this.start_rad,
-            this.size
-       )
+       this.geometry.updateGeometry(this.size);
 
 
         

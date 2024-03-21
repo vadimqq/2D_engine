@@ -1,35 +1,34 @@
 import { Node } from "../../core/Node/Node";
 import { Plugin, PluginInitOptions } from "../../core/PluginManager/Plugin";
-import { RectangleGeometry } from "../Rectangle_Plugin/geometry";
-import fs from "./shaders/fs";
-import vs from "./shaders/vs";
-import {RectangleTool} from "../Ellipse_Plugin/tool";
+import { RectangleTool } from "./tool";
 import {Ellipse} from "./Ellipse";
 import {NODE_SYSTEM_TYPE} from "../../core/Node/model";
+import {RectangleGeometry} from "../../core/Geometry";
+import {EllipseShaderProgram} from "./EllipseShaderProgram";
 
 export class EllipseShader_Plugin implements Plugin {
-    name = 'PIXEL_GRID_PLUGIN';
+    name = 'ELLIPSE_SHADER_PLUGIN';
 
     constructor(options: PluginInitOptions) {
-        // options.renderer.registerProgram('ELLIPSE_SHADER', vs, fs)
+        options.renderer.registerProgram('ELLIPSE_SHADER', EllipseShaderProgram)
 
-        options.toolManager.registerNewTool('ELLIPSE_TOOL', new RectangleTool(options.nodeManager))
+        //options.toolManager.registerNewTool('ELLIPSE_TOOL', new RectangleTool(options.nodeManager))
         options.nodeManager.registerNewNode('ELLIPSE_SHADER', Ellipse)
 
-        const arr = [...Array(5).keys()];
+        const arr = [...Array(1).keys()];
 
         arr.forEach(() => {
             const ellipse = options.nodeManager.createNode('ELLIPSE_SHADER',{ transform: [
                     1, 0, 0,
                     0, 1, 0,
-                    Math.floor(Math.random() * 900), Math.floor(Math.random() * 600), 1
+                    0, 0, 1
                 ]})
-
+console.log(ellipse);
             options.scene.add_child(ellipse)
         })
 
-        const grid = new EllipseShader()
-        options.renderer.postEffects.push(grid)
+        // const grid = new EllipseShader()
+        // options.renderer.postEffects.push(grid)
     }
 
     init() {}
