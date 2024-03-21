@@ -1,13 +1,18 @@
 import { SpectrographMouseEvent } from "../../events/MouseEvents/SpectrographMouseEvent";
 import { SystemExtensionManager } from "../SystemExtensionManager/SystemExtensionManager";
+import { CursorStyleManager } from "./CursorManager";
 import { Tool } from "./Tool";
 
 export class ToolManager {
     private systemExtensionManager: SystemExtensionManager;
-    currentTool: Tool = DEFAULT_TOOL
+    currentTool: Tool = DEFAULT_TOOL;
     toolMap = new Map();
+    cursorStyleManager: CursorStyleManager;
+
     constructor(systemExtensionManager: SystemExtensionManager) {
-        this.systemExtensionManager = systemExtensionManager
+        this.systemExtensionManager = systemExtensionManager;
+        this.cursorStyleManager = new CursorStyleManager(systemExtensionManager.canvas);
+
         this._onPointerDown =  this._onPointerDown.bind(this);
         this.systemExtensionManager.getMouseEventSystem().addListener('_onPointerDown', this._onPointerDown)
 
@@ -24,7 +29,7 @@ export class ToolManager {
     }
     getCurrentTool() {}
     setTool(toolName: string) {
-        this.currentTool = this.toolMap.get(toolName)
+        this.currentTool = this.toolMap.get(toolName);
     }
 
     _onPointerDown(event: SpectrographMouseEvent) {

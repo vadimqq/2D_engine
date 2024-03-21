@@ -6,7 +6,7 @@ import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
 
-export enum RESIZE_CONTROL_TYPE {
+export enum ROTATE_CONTROL_TYPE {
     LEFT_TOP = 'LEFT_TOP',
     RIGHT_TOP = 'RIGHT_TOP',
     RIGHT_BOTTOM = 'RIGHT_BOTTOM',
@@ -18,9 +18,9 @@ const sizeY = 15;
 
 
 export class RotateControl extends Node<RectangleGeometry> {
-    instrumentType: RESIZE_CONTROL_TYPE;
+    instrumentType: ROTATE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
-    constructor(type: RESIZE_CONTROL_TYPE) {
+    constructor(type: ROTATE_CONTROL_TYPE) {
         super({
             geometry: new RectangleGeometry(sizeX, sizeY),
             color: new Color({
@@ -36,18 +36,18 @@ export class RotateControl extends Node<RectangleGeometry> {
         this.size.set(sizeX, sizeY)
 
         switch (this.instrumentType) {
-            case RESIZE_CONTROL_TYPE.LEFT_TOP:
+            case ROTATE_CONTROL_TYPE.LEFT_TOP:
                 this.sizeMultiplier = new Vector2(-1, -1)
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
+            case ROTATE_CONTROL_TYPE.RIGHT_TOP:
                 this.sizeMultiplier = new Vector2(1, -1)
 
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
+            case ROTATE_CONTROL_TYPE.RIGHT_BOTTOM:
                 this.sizeMultiplier = new Vector2(1, 1)
 
                 break;
-            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
+            case ROTATE_CONTROL_TYPE.LEFT_BOTTOM:
                 this.sizeMultiplier = new Vector2(-1, 1)
                 break;
             default:
@@ -68,22 +68,22 @@ export class RotateControl extends Node<RectangleGeometry> {
         const halfSizeX = this.size.x / 2;
 
         switch (this.instrumentType) {
-            case RESIZE_CONTROL_TYPE.LEFT_TOP:
+            case ROTATE_CONTROL_TYPE.LEFT_TOP:
                 this.localMatrix.rotate(Math.PI / 4)
                 this.localMatrix.translate(-halfSizeX, -this.size.y)
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
+            case ROTATE_CONTROL_TYPE.RIGHT_TOP:
                 this.localMatrix.translate(this.parent.size.x, 0)
                 this.localMatrix.rotate(-Math.PI / 4)
                 this.localMatrix.translate(-halfSizeX, -this.size.y)
 
                 break;
-            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
+            case ROTATE_CONTROL_TYPE.RIGHT_BOTTOM:
                 this.localMatrix.translate(this.parent.size.x, this.parent.size.y)
                 this.localMatrix.rotate(Math.PI / 4)
                 this.localMatrix.translate(-halfSizeX, 0)
                 break;
-            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
+            case ROTATE_CONTROL_TYPE.LEFT_BOTTOM:
                 this.localMatrix.translate(0, this.parent.size.y)
                 this.localMatrix.rotate(-Math.PI / 4)
                 this.localMatrix.translate(-halfSizeX, 0)

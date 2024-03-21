@@ -4,11 +4,8 @@ import { MoveTool } from "./moveTool";
 
 export class MoveToolPlugin implements Plugin {
     name = 'MOVE_TOOL_PLUGIN';
-
-    // private scene: Scene;
-
     constructor(options: PluginInitOptions) {
-        options.toolManager.registerNewTool('MOVE_TOOL', new MoveTool(options.controlNode))
+        options.toolManager.registerNewTool('MOVE_TOOL', new MoveTool(options.controlNode, options.toolManager.cursorStyleManager))
         options.toolManager.setTool('MOVE_TOOL')
     }
 

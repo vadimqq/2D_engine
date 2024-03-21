@@ -1,4 +1,5 @@
-import { ActionsType } from "../model"
+import { cursorGetter } from "../cursorGetter"
+import { ActionsType, CURSOR_TYPE } from "../model"
 
 export const graphicsActions: ActionsType = {
     onPointerDown: ({event, controlNode, intersect, setCurrentIntersectionNode}) => {
@@ -12,7 +13,9 @@ export const graphicsActions: ActionsType = {
         }
     },
     onPointerUp: () => {},
-    onPointerMove: () => {},
+    onPointerMove: ({ cursorStyleManager }) => {
+        cursorStyleManager.setCursor(CURSOR_TYPE.DEFAULT, cursorGetter.getDefaultCursor())
+    },
     onDrag: () => {},
     onDragEnd: () => {},
 }
