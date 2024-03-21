@@ -1,21 +1,10 @@
 import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Color } from "../../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { RectangleGeometry } from "../../core/Geometry";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { SHADER_TYPE } from "../../rendering/const";
-
-export class ControlGeometry extends BufferGeometry {
-    constructor(x = 1, y = 1) {
-        super()
-        this.position = { numComponents: 2, data: [-x, -y, x, -y, x, y, -x, y], };
-        this.indices =  { numComponents: 2, data: [0, 1, 2, 0, 2, 3, ]};
-
-    }
-    updateGeometry(size: Vector2) {
-        this.position = { numComponents: 2, data: [-size.x, -size.y, size.x, -size.y, size.x, size.y, -size.x, size.y], };
-    }
-}
 
 export enum RESIZE_CONTROL_TYPE {
     LEFT_TOP = 'LEFT_TOP',
@@ -24,23 +13,44 @@ export enum RESIZE_CONTROL_TYPE {
     LEFT_BOTTOM = 'LEFT_BOTTOM',
 }
 
-export class ResizeControl extends Node<ControlGeometry> {
-    instrumentType: RESIZE_CONTROL_TYPE;
+const size = 10;
 
+export class ResizeControl extends Node<RectangleGeometry> {
+    instrumentType: RESIZE_CONTROL_TYPE;
+    sizeMultiplier: Vector2;
     constructor(type: RESIZE_CONTROL_TYPE) {
         super({
-            geometry: new ControlGeometry(5, 5),
+            geometry: new RectangleGeometry(size, size),
             color: new Color({
-                r: 190 / 255,
-                g: 190 / 255,
-                b: 190 / 255,
+                r: 1,
+                g: 1,
+                b: 1,
                 a: 1,
             }),
-            systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
-            shaderType: SHADER_TYPE.PRIMITIVE
+            systemType: NODE_SYSTEM_TYPE.RESIZE_CONTROL,
+            shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE
         })
         this.instrumentType = type
-        this.size.set(5, 5)
+        this.size.set(size, size)
+
+        switch (this.instrumentType) {
+            case RESIZE_CONTROL_TYPE.LEFT_TOP:
+                this.sizeMultiplier = new Vector2(-1, -1)
+                break;
+            case RESIZE_CONTROL_TYPE.RIGHT_TOP:
+                this.sizeMultiplier = new Vector2(1, -1)
+
+                break;
+            case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
+                this.sizeMultiplier = new Vector2(1, 1)
+
+                break;
+            case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
+                this.sizeMultiplier = new Vector2(-1, 1)
+                break;
+            default:
+                break;
+        }
     }
 
     init() {
@@ -53,19 +63,19 @@ export class ResizeControl extends Node<ControlGeometry> {
 
     updatePosition() {
         this.localMatrix.identity()
+        const halfSize = this.size.x / 2;
         switch (this.instrumentType) {
             case RESIZE_CONTROL_TYPE.LEFT_TOP:
-                this.localMatrix.translate(0, 0)
+                this.localMatrix.translate(-halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_TOP:
-                this.parent.size.x
-                this.localMatrix.translate(this.parent.size.x, 0)
+                this.localMatrix.translate(this.parent.size.x - halfSize, -halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.RIGHT_BOTTOM:
-                this.localMatrix.translate(this.parent.size.x, this.parent.size.y)
+                this.localMatrix.translate(this.parent.size.x -halfSize, this.parent.size.y - halfSize)
                 break;
             case RESIZE_CONTROL_TYPE.LEFT_BOTTOM:
-                this.localMatrix.translate(0, this.parent.size.y)
+                this.localMatrix.translate(-halfSize, this.parent.size.y - halfSize)
                 break;
             default:
                 break;
@@ -86,7 +96,10 @@ export class ResizeControl extends Node<ControlGeometry> {
 		return this.worldMatrix
 	}
     beforeRender(camera: Camera): void {
-        const vec = this.size.clone().set(this.size.x / camera.zoom, this.size.y / camera.zoom)
-        this.geometry.updateGeometry(vec)
+        this.size.set(size / camera.zoom, size / camera.zoom)
+
+        this.geometry.updateGeometry(this.size)
+        this.updatePosition()
+        this.needUpdateMatrix = true; //TODO подумать как обновлять матрицу реже
     }
 }

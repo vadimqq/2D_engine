@@ -2,7 +2,6 @@ import { Camera } from "./camera/Camera";
 import { ControlNode } from "./controlNode/controlNode";
 import { NodeManager } from "./core/NodeManager/NodeManager";
 import { PluginManager } from "./core/PluginManager/PluginManager";
-import { StreamManager } from "./core/StreamManager/StreamManager";
 import { SystemExtensionManager } from "./core/SystemExtensionManager/SystemExtensionManager";
 import { ToolManager } from "./core/ToolManager/ToolManager";
 import { WebGLRenderer } from "./rendering/WebGLRenderer";
@@ -18,7 +17,6 @@ export class Spectrograph {
     toolManager: ToolManager;
     pluginManager: PluginManager;
     controlNode = new ControlNode();
-    streamsManager = new StreamManager();
     ticker: Ticker = new Ticker()
     constructor(){
         const canvas = document.createElement('canvas')
@@ -31,6 +29,10 @@ export class Spectrograph {
 
         this.renderer = new WebGLRenderer(canvas)
 
+        this.updateFrustum = this.updateFrustum.bind(this);
+        this.controlNode.addListener('change_visible', this.updateFrustum)//TODO нужно подумать как вынести все это дело, в рутовом классе подписка на разные инстансы это плохо
+       
+
         this.nodeManager = new NodeManager(this.renderer);
 
         //Регистрация системных зависимостей
@@ -38,7 +40,6 @@ export class Spectrograph {
             renderer: this.renderer,
             scene: this.scene,
             camera: this.camera,
-            streamManger: this.streamsManager,
             controlNode: this.controlNode,
         });
 
@@ -67,5 +68,9 @@ export class Spectrograph {
     }
     render(){
         this.renderer.render(this.scene, this.camera, this.controlNode)
+    }
+
+    updateFrustum() {
+        this.camera.needUpdateFrustum = true;
     }
 }

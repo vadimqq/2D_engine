@@ -9,7 +9,7 @@ export class RectanglePlugin implements Plugin {
     constructor(options: PluginInitOptions) {
         options.toolManager.registerNewTool('RECTANGLE_TOOL', new RectangleTool(options.nodeManager))
         options.nodeManager.registerNewNode('RECTANGLE', Rectangle)
-        const arr = [...Array(10).keys()];
+        const arr = [...Array(2).keys()];
 
         arr.forEach(() => {
             const rect = options.nodeManager.createNode('RECTANGLE',{ transform: [

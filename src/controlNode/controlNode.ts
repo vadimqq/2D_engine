@@ -1,75 +1,165 @@
-import { BufferGeometry } from "../core/BufferGeometry/BufferGeometry";
 import { Color } from "../core/Color";
-import { NODE_SYSTEM_TYPE, Node } from "../core/Node/Node";
+import { RectangleGeometry } from "../core/Geometry";
+import { Node } from "../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../core/Node/model";
 import { Matrix3 } from "../math/Matrix3";
 import { Vector2 } from "../math/Vector2";
 import { SHADER_TYPE } from "../rendering/const";
-import { ResizeVertexControlManager } from "./ResizeControls/ResizeInstrumentManager";
-import { ControlNodeGeometry } from "./controlNodeGeometry";
+import { ResizeControlsManager } from "./ResizeControls/ResizeControlsManager";
+import { ResizeSideControlsManager } from "./ResizeSideControls/ResizeSideControlsManager";
+import { RotateControlsManager } from "./RotateControls/RotateControlsManager";
 
 
 interface ControlNodeEvents {
-	'_on_update': [node: ControlNode];
+	'update': [node: ControlNode];
 }
-export class ControlNode extends Node<ControlNodeGeometry> {
+export class ControlNode extends Node<RectangleGeometry> {
 	shaderType: string;
-	position = new Vector2(0, 0);
-	rotation = 0;
-	scale = new Vector2(1, 1);
-	isVisible = false;
-	transformMatrix = new Matrix3()
+
+	inverseWorldMatrix = new Matrix3();//Без учета позиции, только скейл и поворот
+	prevWorldMatrix = new Matrix3();// Мамтрица до начала трансформации
+	prevSize = new Vector2();//Размер до начала трансформации
 
 	private calculateSizeService = new CalculateSizeService();
-	private resizeVertexControlManager: ResizeVertexControlManager
+	private resizeControlsManager: ResizeControlsManager;
+	private rotateControlsManager: RotateControlsManager;
+	private resizeSideControlsManager: ResizeSideControlsManager;
+
+
 
 	nodeMap = new Map<number,{
-		node: Node<BufferGeometry>;
+		node: Node;
 		prevMatrix: Matrix3;
+		prevSize: Vector2;
 	}>();
 
 	constructor() {
 		super({
-			geometry: new ControlNodeGeometry(),
-        	color: new Color({ r: 1, g: 1, b: 1, a: 0.5 }),
+			geometry: new RectangleGeometry(),
+        	color: new Color({ r: 1, g: 1, b: 1, a: 0 }),
 			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
-			shaderType: SHADER_TYPE.PRIMITIVE
+			shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE,
 		});
-		this.setSize(100, 100)
-		this.geometry.updateGeometry(this.size)
-		this.resizeVertexControlManager = new ResizeVertexControlManager(this)
-		this.resizeVertexControlManager.init()
+		this.setIsVisible(false);
+
+		this.resizeSideControlsManager = new ResizeSideControlsManager(this);
+		this.resizeSideControlsManager.init()
+
+		this.rotateControlsManager = new RotateControlsManager(this);
+		this.rotateControlsManager.init()
+
+		this.resizeControlsManager = new ResizeControlsManager(this);
+		this.resizeControlsManager.init()
 	}
 
-	setRotation(angle: number) {
-		this.rotation = angle
-		this.needUpdateMatrix = true
+	setRotation(angle: number, offset: Vector2) {
+		if (this.nodeMap.size > 1) {
+			this.nodeMap.forEach(({node, prevMatrix}) => {
+				node.localMatrix
+				.identity()
+				.translate(offset.x, offset.y)
+				.rotate(angle)
+				.translate(-offset.x, -offset.y)
+				.multiply(prevMatrix);
+				node.needUpdateMatrix = true;
+			});
+		} else {
+			const {node, prevMatrix} = this.nodeMap.values().next().value;
+			node.localMatrix.copy(prevMatrix)
+			.translate(node.size.x / 2, node.size.y / 2)
+			.rotate(angle)
+			.translate(-node.size.x / 2, -node.size.y / 2);
+
+			node.needUpdateMatrix = true;
+		}
+		this._calculateSizeAndPosition()
 	}
 
 	setPosition(vector: Vector2) {
-		this.transformMatrix.setPosition(vector)
-		const nodeList = Array.from(this.nodeMap.values())
-		nodeList.forEach(({node, prevMatrix}) => {
-			node.localMatrix.copy(prevMatrix)
-			node.localMatrix.multiply(this.transformMatrix)
-			node.needUpdateMatrix = true
-		})
+		if (this.nodeMap.size > 1) {
+			this.nodeMap.forEach(({node, prevMatrix}) => {
+				node.localMatrix
+				.identity()
+				.translate(vector.x , vector.y)
+				.multiply(prevMatrix);
+				node.needUpdateMatrix = true;
+			});
+		} else {
+			const {node, prevMatrix} = this.nodeMap.values().next().value;
+			node.localMatrix.copy(prevMatrix).translate(vector.x , vector.y);
+			node.needUpdateMatrix = true;
+		}
 		this._calculateSizeAndPosition()
 	}
-	setScale(vector: Vector2) {
-		this.scale = vector
-		this.needUpdateMatrix = true
+	applyScale(vector: Vector2, positionOffset: Vector2) {
+
+		if (this.nodeMap.size > 1) {
+			const testChange = new Vector2(
+				1 + vector.x / this.prevSize.x,
+				1 + vector.y / this.prevSize.y
+
+			)
+			this.nodeMap.forEach(({ node, prevMatrix, prevSize }) => {
+				const localMatrix = prevMatrix
+				.clone()
+				.setPosition(
+					prevMatrix.elements[6] -
+					this.prevWorldMatrix.elements[6],
+					prevMatrix.elements[7] -
+					this.prevWorldMatrix.elements[7],
+				);		
+
+				node.localMatrix
+					.copy(this.prevWorldMatrix)
+					.translate(positionOffset.x, positionOffset.y)
+					.scale(testChange.x, testChange.y)
+					.multiply(localMatrix)
+				
+				//TODO нужно найти точный способо декомпозиции матрицы на скейл и вращение!
+				const decX = node.localMatrix.elements[0];
+				const decY = node.localMatrix.elements[4];
+
+				node.setSize(
+					prevSize.x * decX,
+					prevSize.y * decY
+				)
+
+				node.localMatrix.scale(1 / decX, 1 / decY);
+				//! =======================================
+
+				node.needUpdateMatrix = true
+			});
+		} else {
+			const { node, prevSize, prevMatrix } = this.nodeMap.values().next().value;
+			const newSizeX = prevSize.x + vector.x
+			const newSizeY = prevSize.y + vector.y
+
+			const xMulti = newSizeX > 0 ? 1: -1;
+			const yMulti = newSizeY > 0 ? 1: -1;
+			node.localMatrix.copy(prevMatrix).scale(xMulti, yMulti).translate(positionOffset.x * xMulti, positionOffset.y * yMulti);
+			node.setSize(Math.abs(newSizeX), Math.abs(newSizeY))
+			node.needUpdateMatrix = true
+		}
+		this._calculateSizeAndPosition()
 	}
 
-	addNode(node: Node<BufferGeometry>) {
-		this.nodeMap.set(node.guid, { node, prevMatrix: node.localMatrix.clone() })
-		this._calculateSizeAndPosition()
-		this.isVisible = true
+	addNode(node: Node) {
+		this.nodeMap.set(node.guid, {
+			node,
+			prevMatrix: node.localMatrix.clone(),
+			prevSize: node.size.clone()
+		});
+		
+		this._calculateSizeAndPosition();
+		this.setIsVisible(true);
+		this.updateTransformInfo();
 	}
 
 	removeNode(guid: number) {
 		this.nodeMap.delete(guid)
 		this._calculateSizeAndPosition()
-		this.isVisible = true
+		this.setIsVisible(true)
+		this.updateTransformInfo();
 	}
 
 	hasNode(guid: number) {
@@ -78,7 +168,7 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 
 	clearNodeList() {
 		this.nodeMap = new Map()
-		this.isVisible = false
+		this.setIsVisible(false)
 		this.size.set(0, 0)
 	}
 
@@ -88,25 +178,33 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 
 	endNodeMutation() {
 		this._updateNodePreviousMatrix()
+		this.updateTransformInfo()
+	}
+
+	updateTransformInfo() {
+		this.computeWorldMatrix()
+		this.prevSize.copy(this.size)
+		this.prevWorldMatrix.copy(this.worldMatrix)
+		this.inverseWorldMatrix.copy(this.worldMatrix).invert().setPosition(0, 0)
 	}
 
 	private _updateNodePreviousMatrix() {
-		const nodeKeyList = Array.from(this.nodeMap.keys())
-		nodeKeyList.forEach((guid) => {
-			const { node, prevMatrix } = this.nodeMap.get(guid)
+		this.nodeMap.forEach((value, guid) => {
+			const { node, prevMatrix, prevSize } = this.nodeMap.get(guid)
 			prevMatrix.copy(node.localMatrix)
+			prevSize.copy(node.size)
 		})
 	}
 
 	private _calculateSizeAndPosition() {
 		if (this.nodeMap.size > 1) {
-			const { minX, maxX, minY, maxY } = this.calculateSizeService.calculateSizeMultiLayer(Array.from(this.nodeMap.values()))
+			const { minX, maxX, minY, maxY } = this.calculateSizeService.calculateSizeMultiLayer(this.nodeMap)
 
 			this.setSize(maxX - minX, maxY - minY)
 			this.geometry.updateGeometry(this.size)
 
 			this.localMatrix.identity()
-			this.localMatrix.translate(minX, minY)
+			this.localMatrix.setPosition(minX, minY)
 			this.needUpdateMatrix = true
 
 		} else if (this.nodeMap.size == 1) {
@@ -118,7 +216,17 @@ export class ControlNode extends Node<ControlNodeGeometry> {
 			this.localMatrix.copy(node.localMatrix)
 			this.needUpdateMatrix = true
 		}
-		this.emit('_on_update', this)
+		this.emit('update', this)
+	}
+
+	//OVERRIDE
+	computeWorldMatrix() {
+		if (this.needUpdateMatrix) {
+			this.worldMatrix.copy(this.localMatrix)
+			this.needUpdateMatrix = false
+			this.children.forEach((child) => {child.needUpdateMatrix = true})
+		}
+		return this.worldMatrix
 	}
 }
 
@@ -128,10 +236,10 @@ class CalculateSizeService {
 	rightBottom = new Vector2();
 	leftBottom = new Vector2();
 
-	calculateSizeMultiLayer(nodeList:{
-		node: Node<BufferGeometry>;
+	calculateSizeMultiLayer(nodeList:Map<number, {
+		node: Node;
 		prevMatrix: Matrix3;
-	}[]) {
+	}>) {
 
 
 		let minX = 0;
@@ -139,7 +247,7 @@ class CalculateSizeService {
 		let maxX = 0;
 		let maxY = 0;
 	
-		nodeList.forEach(({node}) => {
+		nodeList.forEach(({ node }) => {
 	
 		  this.leftTop
 			.set(0, 0)

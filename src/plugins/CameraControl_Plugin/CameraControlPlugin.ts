@@ -46,15 +46,7 @@ export class CameraControlPlugin implements Plugin {
                 this.prevMousePosition.y -
                 this.postMousePosition.y,
             );
-            console.log(this.camera)
         } else {
-            // const currentX = getMinMaxNumber(this.camera.position.x + nativeEvent.deltaX / this.camera.zoom, -1300, 1300)
-            
-            // const currentY = getMinMaxNumber(this.camera.position.y + nativeEvent.deltaY / this.camera.zoom, -1300, 1300)
-            // this.camera.setPosition(
-            //     currentX,
-            //     currentY,
-            // );
             this.camera.setPosition(
                 this.camera.position.x + nativeEvent.deltaX / this.camera.zoom,
                 this.camera.position.y + nativeEvent.deltaY / this.camera.zoom,

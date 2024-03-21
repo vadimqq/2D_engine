@@ -1,5 +1,5 @@
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
 import { Vector2 } from "../../math/Vector2";
+import {BufferGeometry} from "../../core/Geometry";
 
 export class EllipseGeometry extends BufferGeometry {
     constructor(x = 1, y = 1) {

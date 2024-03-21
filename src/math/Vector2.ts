@@ -18,7 +18,7 @@ export class Vector2{
         return new Vector2(this.x, this.y);
     }
 
-	public copyFrom(vec: Vector2): this {
+	public copy(vec: Vector2): this {
         this.set(vec.x, vec.y);
 
         return this;
@@ -31,6 +31,13 @@ export class Vector2{
     public sub(vec: Vector2) {
 		this.x -= vec.x;
 		this.y -= vec.y;
+
+		return this;
+	}
+
+	public add(vec: Vector2) {
+		this.x += vec.x;
+		this.y += vec.y;
 
 		return this;
 	}
@@ -55,6 +62,37 @@ export class Vector2{
 		this.x = Math.max( this.x, vec.x );
 		this.y = Math.max( this.y, vec.y );
 
+		return this;
+	}
+
+	public round() {
+		this.x = Math.round(this.x)
+		this.y = Math.round(this.y)
+		
+		return this;
+	}
+
+	public divide(vec: Vector2) {
+		this.x /= vec.x;
+		this.y /= vec.y;
+
+		return this;
+	}
+	public divideScalar(scalar: number) {
+		return this.multiplyScalar(1 / scalar);
+	}
+
+	public multiply(vec: Vector2) {
+		this.x *= vec.x;
+		this.y *= vec.y;
+
+		return this;
+	}
+
+	public multiplyScalar(scalar: number) {
+		this.x *= scalar;
+		this.y *= scalar;
+		
 		return this;
 	}
 

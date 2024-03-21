@@ -1,6 +1,6 @@
 import { Camera } from "../../camera/Camera";
-import { BufferGeometry } from "../../core/BufferGeometry/BufferGeometry";
-import { NODE_SYSTEM_TYPE, Node } from "../../core/Node/Node";
+import { Node } from "../../core/Node/Node";
+import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
 import { Vector2 } from "../../math/Vector2";
 import { Scene } from "../../scene/Scene";
 
@@ -8,7 +8,7 @@ export class SpectrographMouseEvent {
     private camera: Camera
     nativeEvent: MouseEvent | PointerEvent | TouchEvent | WheelEvent;
     scenePosition = new Vector2();
-    intersectNodes: Node<BufferGeometry>[] = [];
+    intersectNodes: Node[] = [];
     isMouseDown = false;
     shiftKey = false;
     altKey = false;

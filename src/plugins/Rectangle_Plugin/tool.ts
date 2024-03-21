@@ -12,7 +12,6 @@ export class RectangleTool implements Tool {
     
         const RectangleClass = this.nodeManager.getNodeClassByName('RECTANGLE')
         if (RectangleClass) {
-            console.log(event.intersectNodes[0])
             const newRectangle = this.nodeManager.createNode('RECTANGLE',[
                 1, 0, 0,
                 0, 1, 0,
