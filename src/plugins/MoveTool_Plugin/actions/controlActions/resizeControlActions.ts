@@ -1,7 +1,7 @@
-import { RESIZE_CONTROL_TYPE, ResizeControl } from "../../../controlNode/ResizeControls/ResizeControl";
-import { Vector2 } from "../../../math/Vector2";
-import { cursorGetter } from "../cursorGetter";
-import { ActionsType, CURSOR_TYPE } from "../model";
+import { Vector2 } from "../../../../math/Vector2";
+import { RESIZE_CONTROL_TYPE, ResizeControl } from "../../../BaseControls_Plugin/ResizeControls/ResizeControl";
+import { cursorGetter } from "../../cursorGetter";
+import { ActionsType, CURSOR_TYPE } from "../../model";
 
 export const resizeControlActions: ActionsType & { positionOffset: Vector2; } = {
     positionOffset: new Vector2(),

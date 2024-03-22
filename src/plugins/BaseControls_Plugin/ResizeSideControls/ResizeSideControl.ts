@@ -1,10 +1,10 @@
-import { Camera } from "../../camera/Camera";
-import { Color } from "../../core/Color";
-import { RectangleGeometry } from "../../core/Geometry";
-import { Node } from "../../core/Node/Node";
-import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
-import { Vector2 } from "../../math/Vector2";
-import { SHADER_TYPE } from "../../rendering/const";
+import { Camera } from "../../../camera/Camera";
+import { Control } from "../../../controlNode/Control";
+import { Color } from "../../../core/Color";
+import { RectangleGeometry } from "../../../core/Geometry";
+import { Vector2 } from "../../../math/Vector2";
+import { SHADER_TYPE } from "../../../rendering/const";
+
 
 
 export enum RESIZE_SIDE_CONTROL_TYPE {
@@ -15,11 +15,12 @@ export enum RESIZE_SIDE_CONTROL_TYPE {
 }
 
 const width = 10;
-export class ResizeSideControl extends Node<RectangleGeometry> {
+export class ResizeSideControl extends Control<RectangleGeometry> {
     instrumentType: RESIZE_SIDE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
-    constructor(type: RESIZE_SIDE_CONTROL_TYPE) {
+    constructor(type: RESIZE_SIDE_CONTROL_TYPE, controlManagerName: string) {
         super({
+            controlManagerName,
             geometry: new RectangleGeometry(width, width),
             color: new Color({
                 r: 0,
@@ -27,7 +28,6 @@ export class ResizeSideControl extends Node<RectangleGeometry> {
                 b: 0,
                 a: 0,
             }),
-            systemType: NODE_SYSTEM_TYPE.RESIZE_SIDE_CONTROL,
             shaderType: SHADER_TYPE.PRIMITIVE
         })
         this.instrumentType = type

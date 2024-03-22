@@ -12,6 +12,7 @@ export class Ellipse extends Node<EllipseGeometry> {
     segments: number = 100;
     constructor({ transform }: CreateNodeOptionsType) {
         super({
+            type: 'ELLIPSE',
             geometry: new EllipseGeometry(),
             color: new Color({
                 r: 209 / 255,

@@ -58,6 +58,7 @@ interface mouseEvents {
     _onPointerMove: [event: SpectrographMouseEvent];
     _onPointerUp: [event: SpectrographMouseEvent];
     _onWheel: [event: SpectrographMouseEvent];
+    _onHoverChange: [node: Node];
 }
 export class MouseEventSystem extends EventEmitter<mouseEvents> implements Extension {
     name = 'MOUSE_EVENT_SYSTEM'
@@ -66,7 +67,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
     public camera: Camera;
     public scene: Scene;
     public controlNode: ControlNode;
-
+    public hoveredNode: Node;
 
     mouseEvent: SpectrographMouseEvent;
     intersectService = new IntersectService();
@@ -76,6 +77,7 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
         this.renderer = renderer;
         this.camera = camera;
         this.scene = scene;
+        this.hoveredNode = scene; 
         this.domElement = renderer.canvasElement // как заглушка для тайпскрипта
         this.mouseEvent = new SpectrographMouseEvent(this.camera, this.scene)
         this.controlNode = controlNode
@@ -140,6 +142,14 @@ export class MouseEventSystem extends EventEmitter<mouseEvents> implements Exten
         testIntersect(nodeList: Node[], event: SpectrographMouseEvent) {
             event.intersectNodes = []
             const intersects = this.intersectService.findIntersect(nodeList, event.scenePosition)
-            event.intersectNodes = intersects
+            event.intersectNodes = intersects;
+            this.setHoveredNode(event.getLastIntersection())
+        }
+
+        setHoveredNode(node: Node) {
+            if (node?.guid !== this.hoveredNode.guid) {
+                this.hoveredNode = node;
+                this.emit('_onHoverChange', this.hoveredNode)
+            }
         }
 }

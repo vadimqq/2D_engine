@@ -1,10 +1,9 @@
-import { Camera } from "../../camera/Camera";
-import { Color } from "../../core/Color";
-import { RectangleGeometry } from "../../core/Geometry";
-import { Node } from "../../core/Node/Node";
-import { NODE_SYSTEM_TYPE } from "../../core/Node/model";
-import { Vector2 } from "../../math/Vector2";
-import { SHADER_TYPE } from "../../rendering/const";
+import { Camera } from "../../../camera/Camera";
+import { Control } from "../../../controlNode/Control";
+import { Color } from "../../../core/Color";
+import { RectangleGeometry } from "../../../core/Geometry";
+import { Vector2 } from "../../../math/Vector2";
+import { SHADER_TYPE } from "../../../rendering/const";
 
 export enum ROTATE_CONTROL_TYPE {
     LEFT_TOP = 'LEFT_TOP',
@@ -13,27 +12,25 @@ export enum ROTATE_CONTROL_TYPE {
     LEFT_BOTTOM = 'LEFT_BOTTOM',
 }
 
-const sizeX = 20;
-const sizeY = 15;
+const size = 10;
 
-
-export class RotateControl extends Node<RectangleGeometry> {
+export class RadiusControl extends Control<RectangleGeometry> {
     instrumentType: ROTATE_CONTROL_TYPE;
     sizeMultiplier: Vector2;
-    constructor(type: ROTATE_CONTROL_TYPE) {
+    constructor(type: ROTATE_CONTROL_TYPE, controlManagerName: string) {
         super({
-            geometry: new RectangleGeometry(sizeX, sizeY),
+            controlManagerName,
+            geometry: new RectangleGeometry(size, size),
             color: new Color({
-                r: 0,
-                g: 0,
-                b: 0,
-                a: 0,
+                r: 1,
+                g: 1,
+                b: 1,
+                a: 1,
             }),
-            systemType: NODE_SYSTEM_TYPE.ROTATE_CONTROL,
-            shaderType: SHADER_TYPE.PRIMITIVE,
+            shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE
         })
         this.instrumentType = type
-        this.size.set(sizeX, sizeY)
+        this.size.set(size, size)
 
         switch (this.instrumentType) {
             case ROTATE_CONTROL_TYPE.LEFT_TOP:
@@ -65,30 +62,19 @@ export class RotateControl extends Node<RectangleGeometry> {
 
     updatePosition() {
         this.localMatrix.identity()
-        const halfSizeX = this.size.x / 2;
-
+        const halfSize = this.size.x / 2;
         switch (this.instrumentType) {
             case ROTATE_CONTROL_TYPE.LEFT_TOP:
-                this.localMatrix.rotate(Math.PI / 4)
-                this.localMatrix.translate(-halfSizeX, -this.size.y)
+                this.localMatrix.translate(0, 0)
                 break;
             case ROTATE_CONTROL_TYPE.RIGHT_TOP:
                 this.localMatrix.translate(this.parent.size.x, 0)
-                this.localMatrix.rotate(-Math.PI / 4)
-                this.localMatrix.translate(-halfSizeX, -this.size.y)
-
                 break;
             case ROTATE_CONTROL_TYPE.RIGHT_BOTTOM:
                 this.localMatrix.translate(this.parent.size.x, this.parent.size.y)
-                this.localMatrix.rotate(Math.PI / 4)
-                this.localMatrix.translate(-halfSizeX, 0)
                 break;
             case ROTATE_CONTROL_TYPE.LEFT_BOTTOM:
                 this.localMatrix.translate(0, this.parent.size.y)
-                this.localMatrix.rotate(-Math.PI / 4)
-                this.localMatrix.translate(-halfSizeX, 0)
-
-
                 break;
             default:
                 break;
@@ -109,7 +95,7 @@ export class RotateControl extends Node<RectangleGeometry> {
 		return this.worldMatrix
 	}
     beforeRender(camera: Camera): void {
-        this.size.set(sizeX / camera.zoom, sizeY / camera.zoom)
+        this.size.set(size / camera.zoom, size / camera.zoom)
 
         this.geometry.updateGeometry(this.size)
         this.updatePosition()

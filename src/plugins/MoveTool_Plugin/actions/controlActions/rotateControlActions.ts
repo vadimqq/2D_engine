@@ -1,10 +1,11 @@
-import { ROTATE_CONTROL_TYPE, RotateControl } from "../../../controlNode/RotateControls/RotateControl";
-import { ControlNode } from "../../../controlNode/controlNode";
-import { Node } from "../../../core/Node/Node";
-import { CursorStyleManager } from "../../../core/ToolManager/CursorManager";
-import { Vector2 } from "../../../math/Vector2";
-import { cursorGetter } from "../cursorGetter";
-import { ActionsType, CURSOR_TYPE } from "../model";
+import { ControlNode } from "../../../../controlNode/controlNode";
+import { Node } from "../../../../core/Node/Node";
+import { CursorStyleManager } from "../../../../core/ToolManager/CursorManager";
+import { Vector2 } from "../../../../math/Vector2";
+import { RotateControl } from "../../../BaseControls_Plugin/RotateControls/RotateControl";
+import { ROTATE_CONTROL_TYPE } from "../../../Rectangle_Plugin/controls/RadiusControl";
+import { cursorGetter } from "../../cursorGetter";
+import { ActionsType, CURSOR_TYPE } from "../../model";
 
 export const rotateControlActions: ActionsType & {startAngle: number; rotateVector: Vector2; rotateOffsetVector: Vector2 } = {
     startAngle: 0,

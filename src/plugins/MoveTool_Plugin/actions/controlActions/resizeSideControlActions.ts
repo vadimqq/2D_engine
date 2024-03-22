@@ -1,7 +1,7 @@
-import { RESIZE_SIDE_CONTROL_TYPE, ResizeSideControl } from "../../../controlNode/ResizeSideControls/ResizeSideControl";
-import { Vector2 } from "../../../math/Vector2";
-import { cursorGetter } from "../cursorGetter";
-import { ActionsType, CURSOR_TYPE } from "../model";
+import { Vector2 } from "../../../../math/Vector2";
+import { RESIZE_SIDE_CONTROL_TYPE, ResizeSideControl } from "../../../BaseControls_Plugin/ResizeSideControls/ResizeSideControl";
+import { cursorGetter } from "../../cursorGetter";
+import { ActionsType, CURSOR_TYPE } from "../../model";
 
 export const resizeSideControlActions: ActionsType & { positionOffset: Vector2; } = {
     positionOffset: new Vector2(),

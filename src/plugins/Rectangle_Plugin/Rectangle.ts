@@ -12,6 +12,7 @@ export class Rectangle extends Node<RectangleBezierGeometry> {
 
     constructor({ transform }: CreateNodeOptionsType) {
         super({
+            type: 'RECTANGLE',
             geometry: new RectangleBezierGeometry(),
             color: new Color({
                 r: 209 / 255,

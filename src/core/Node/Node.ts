@@ -8,6 +8,7 @@ import { AnyEvent, InitialOptionsType, NODE_SYSTEM_TYPE, NodeEvents } from './mo
 
 export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitter<NodeEvents & AnyEvent>{
 	guid: number;
+	type: string;
 	systemType: NODE_SYSTEM_TYPE;
 	shaderType: string;
 	localMatrix = new Matrix3();
@@ -26,6 +27,7 @@ export class Node<G extends BufferGeometry = BufferGeometry>  extends EventEmitt
 
 	constructor(options: InitialOptionsType<G>) {
 		super();
+		this.type = options.type;
 		this.shaderType = options.shaderType
 		this.systemType = options.systemType 
 		this.guid = Math.floor(Math.random() * 10000000)
