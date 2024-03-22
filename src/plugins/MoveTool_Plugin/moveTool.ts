@@ -32,15 +32,12 @@ export class MoveTool implements Tool {
     
     constructor(controlNode: ControlNode, cursorStyleManager: CursorStyleManager) {
         this.controlNode = controlNode;
-        this.setCurrentIntersectionNode = this.setCurrentIntersectionNode.bind(this)
         this.cursorStyleManager = cursorStyleManager;
+
+        this.setCurrentIntersectionNode = this.setCurrentIntersectionNode.bind(this);
     }
     setCurrentIntersectionNode(node: Node) {
         this.currentIntersectionNode = node;
-        // if (this.currentCursorType !== node.systemType) {
-        //     this.actionMapper[this.currentIntersectionNode.systemType].setCursor(this.canvas, this.controlNode, this.currentIntersectionNode)
-        //     this.currentCursorType = node.systemType;
-        // }
     }
     onPointerDown(event: SpectrographMouseEvent) {
         this.setCurrentIntersectionNode(event.getLastIntersection());

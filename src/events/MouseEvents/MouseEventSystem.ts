@@ -21,10 +21,10 @@ class IntersectService {
 
     findIntersect(nodeList: Node[], eventPoint: Vector2, intersectedLayers: Node[] = []) {
         nodeList.forEach((node) => {
-            this.p1.set(0, 0).applyMatrix3(node.worldMatrix);
-            this.p2.set(node.size.x, 0).applyMatrix3(node.worldMatrix);
-            this.p3.set(node.size.x, node.size.y).applyMatrix3(node.worldMatrix);
-            this.p4.set(0, node.size.y).applyMatrix3(node.worldMatrix);
+            this.p1.set(0, 0).applyMatrix3(node.worldMatrix); //Left-top
+            this.p2.set(node.size.x, 0).applyMatrix3(node.worldMatrix); //Right-top
+            this.p3.set(node.size.x, node.size.y).applyMatrix3(node.worldMatrix); //Right-bottom
+            this.p4.set(0, node.size.y).applyMatrix3(node.worldMatrix); //Left-bottom
     
             this.v1.set(-(this.p2.y - this.p1.y), (this.p2.x - this.p1.x)); //Top
             this.v2.set(-(this.p3.y - this.p2.y), (this.p3.x - this.p2.x)); //Right
@@ -35,7 +35,7 @@ class IntersectService {
             const c2 = -(this.v2.x * this.p2.x + this.v2.y * this.p2.y);
             const c3 = -(this.v3.x * this.p3.x + this.v3.y * this.p3.y);
             const c4 = -(this.v4.x * this.p4.x + this.v4.y * this.p4.y);
-            
+
             if (
                 this.isIntersect(this.v1, c1, eventPoint.x, eventPoint.y)
                 && this.isIntersect(this.v2, c2, eventPoint.x, eventPoint.y)
@@ -43,8 +43,7 @@ class IntersectService {
                 && this.isIntersect(this.v4, c4, eventPoint.x, eventPoint.y)
             ) {
                 intersectedLayers.push(node);
-            }     
-    
+            }
         });
         return intersectedLayers
     }
