@@ -1,4 +1,5 @@
-import { ActionsType } from "../model";
+import { cursorGetter } from "../cursorGetter";
+import { ActionsType, CURSOR_TYPE } from "../model";
 
 export const controlNodeActions: ActionsType & { isPointerDownCalled: boolean } = {
     isPointerDownCalled: false,
@@ -27,5 +28,7 @@ export const controlNodeActions: ActionsType & { isPointerDownCalled: boolean } 
     onPointerDown: () => {
         controlNodeActions.isPointerDownCalled = true;
     },
-    onPointerMove: () => {},
+    onPointerMove: ({ cursorStyleManager }) => {
+        cursorStyleManager.setCursor(CURSOR_TYPE.DEFAULT, cursorGetter.getDefaultCursor())
+    },
 }

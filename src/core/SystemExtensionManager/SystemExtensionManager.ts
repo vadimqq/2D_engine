@@ -2,14 +2,14 @@ import { MouseEventSystem } from "../../events/MouseEvents/MouseEventSystem";
 import { ExtensionInitOptions } from "./Extension";
 
 export class SystemExtensionManager {
-    // private renderer: WebGLRenderer;
     // private scene: Scene;
     // private camera: Camera;
+    canvas: HTMLCanvasElement;
 
     private MOUSE_EVENT_SYSTEM: MouseEventSystem;
 
     constructor(options: ExtensionInitOptions) {
-        // this.renderer = options.renderer
+        this.canvas = options.renderer.canvasElement;
         // this.scene = options.scene
         // this.camera = options.camera
 

@@ -20,6 +20,7 @@ export type InitialOptionsType<G> = {
 	transform?: [number, number, number, number, number, number, number, number, number,];
 	systemType: NODE_SYSTEM_TYPE;
 	shaderType: string;
+	type: string;
 };
 
 export type CreateNodeOptionsType = {
@@ -32,9 +33,10 @@ export type CreateNodeOptionsType = {
 export enum NODE_SYSTEM_TYPE {
 	SCENE = 'SCENE',
 	CONTROL_NODE = 'CONTROL_NODE',
-	RESIZE_CONTROL = 'RESIZE_CONTROL',
-	RESIZE_SIDE_CONTROL = 'RESIZE_SIDE_CONTROL',
-	ROTATE_CONTROL = 'ROTATE_CONTROL',
+	CONTROL = 'CONTROL',
+	// RESIZE_CONTROL = 'RESIZE_CONTROL',
+	// RESIZE_SIDE_CONTROL = 'RESIZE_SIDE_CONTROL',
+	// ROTATE_CONTROL = 'ROTATE_CONTROL',
 	GRAPHICS = 'GRAPHICS',
 	EFFECT = 'EFFECT',
 }

@@ -5,27 +5,22 @@ import { NODE_SYSTEM_TYPE } from "../core/Node/model";
 import { Matrix3 } from "../math/Matrix3";
 import { Vector2 } from "../math/Vector2";
 import { SHADER_TYPE } from "../rendering/const";
-import { ResizeControlsManager } from "./ResizeControls/ResizeControlsManager";
-import { ResizeSideControlsManager } from "./ResizeSideControls/ResizeSideControlsManager";
-import { RotateControlsManager } from "./RotateControls/RotateControlsManager";
-
+import { ClassType } from "../utils/models";
+import { IControlsManager } from "./model";
 
 interface ControlNodeEvents {
 	'update': [node: ControlNode];
 }
 export class ControlNode extends Node<RectangleGeometry> {
 	shaderType: string;
-
 	inverseWorldMatrix = new Matrix3();//Без учета позиции, только скейл и поворот
 	prevWorldMatrix = new Matrix3();// Мамтрица до начала трансформации
 	prevSize = new Vector2();//Размер до начала трансформации
 
 	private calculateSizeService = new CalculateSizeService();
-	private resizeControlsManager: ResizeControlsManager;
-	private rotateControlsManager: RotateControlsManager;
-	private resizeSideControlsManager: ResizeSideControlsManager;
 
-
+	// baseControlsMap = new Map<string, IControlsManager>();
+	nodeControlsMap = new Map<string, IControlsManager>();
 
 	nodeMap = new Map<number,{
 		node: Node;
@@ -35,22 +30,38 @@ export class ControlNode extends Node<RectangleGeometry> {
 
 	constructor() {
 		super({
+			type: 'CONTROL_NODE',
 			geometry: new RectangleGeometry(),
         	color: new Color({ r: 1, g: 1, b: 1, a: 0 }),
 			systemType: NODE_SYSTEM_TYPE.CONTROL_NODE,
 			shaderType: SHADER_TYPE.PRIMITIVE_OUTLINE,
 		});
 		this.setIsVisible(false);
-
-		this.resizeSideControlsManager = new ResizeSideControlsManager(this);
-		this.resizeSideControlsManager.init()
-
-		this.rotateControlsManager = new RotateControlsManager(this);
-		this.rotateControlsManager.init()
-
-		this.resizeControlsManager = new ResizeControlsManager(this);
-		this.resizeControlsManager.init()
 	}
+
+	getFirstNode() {
+		return this.nodeMap.values().next().value.node;
+	}
+
+	registerNewNodeControls(ControlsManagerClass: ClassType<IControlsManager>) {//TODO нужна типизация
+		const newControlsManger = new ControlsManagerClass();
+
+		if (this.nodeControlsMap.has(newControlsManger.name)) {
+			console.warn(`Контрол менеджер ${newControlsManger.name} не может быть зарегестрирован, имя уже занято`)
+		} else {
+			this.nodeControlsMap.set(newControlsManger.name, new ControlsManagerClass())
+			this.nodeControlsMap.get(newControlsManger.name).init(this)
+		}
+	}
+
+	// registerNewBaseControls(name: string, ControlsManagerClass: ClassType<IControlsManager>) {//TODO нужна типизация
+	// 	if (this.baseControlsMap.has(name)) {
+	// 		console.warn(`Контрол ${name} не может быть зарегестрирован, имя уже занято`)
+	// 	} else {
+	// 		this.baseControlsMap.set(name, new ControlsManagerClass())
+	// 		this.baseControlsMap.get(name).init(this)
+	// 	}
+	// }
 
 	setRotation(angle: number, offset: Vector2) {
 		if (this.nodeMap.size > 1) {

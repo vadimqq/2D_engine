@@ -122,5 +122,14 @@ export class Matrix3 {
 	getPosition() {
 		return new Vector2(this.elements[6], this.elements[7])
 	}
+	getRadAngle() {
+		return  Math.atan2(
+            -this.elements[1],
+            this.elements[4],
+          );
+	}
+	getDegreeAngle() {
+		return (this.getRadAngle() * 180.0) / Math.PI;
+	}
 }
 const _m3 = new Matrix3()

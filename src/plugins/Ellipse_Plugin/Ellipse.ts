@@ -1,41 +1,36 @@
-
 import { Color } from "../../core/Color";
-import { BufferGeometry } from "../../core/Geometry";
 import { Node } from "../../core/Node/Node";
-        
-const radius = 50
-const segment = 100
+import { CreateNodeOptionsType, NODE_SYSTEM_TYPE, } from "../../core/Node/model";
 
-export class Ellipse extends Node {
-    constructor() {
-        const points = [0, 0]
-        const indices = []
-        const step = Math.PI * 2 / segment
+import { SHADER_TYPE } from "../../rendering/const";
+import { EllipseGeometry } from "./geometry";
 
-        for (let i = 0; i <= segment; i++) {
-            const cos = Math.cos(step * i)
-            const sin = Math.sin(step * i)
-
-            const pointX = sin  * radius;
-            const pointY = cos  * radius;
-
-           points.push(pointX, pointY)
-
-           indices.push(0, i + 1, i + 2)
-        }
-        const geometry = new BufferGeometry()
-
-        geometry.position = {
-            numComponents: 2,
-            data: points, 
-        }
-        geometry.indices =  {
-            numComponents: 2,
-            data: indices,
-        };
-        super(
-            geometry,
-            new Color({ r: Math.random(), g: Math.random(), b: Math.random(), a: 1 })
-        )
+export class Ellipse extends Node<EllipseGeometry> {
+    innerRadius: number = 0; //Percent value
+    start: number = 0; //Radian value
+    sweep: number = 100; //Percent value
+    segments: number = 100;
+    constructor({ transform }: CreateNodeOptionsType) {
+        super({
+            type: 'ELLIPSE',
+            geometry: new EllipseGeometry(),
+            color: new Color({
+                r: 209 / 255,
+                g: 209 / 255,
+                b: 209 / 255,
+                a: 1,
+            }),
+            transform,
+            systemType: NODE_SYSTEM_TYPE.GRAPHICS,
+            shaderType: SHADER_TYPE.PRIMITIVE
+        })
+        this.size.set(100, 100)
+        this.geometry.updateGeometry(this)
+    }
+    setSize(x: number, y: number) {
+        this.size.set(x, y);
+        this.geometry.updateGeometry(this);
     }
 }
+
+
